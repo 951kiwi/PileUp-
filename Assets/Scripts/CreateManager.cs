@@ -39,7 +39,6 @@ public class CreateManager : MonoBehaviour
     private GameObject obj;
     public List<GameObject> people;
     public bool isFall;
-    int file_length;
     public float pivotHeight = 15; // 生成位置の基準
     public Camera mainCamera;
     private Vector3 initialCameraPosition;
@@ -63,8 +62,7 @@ public class CreateManager : MonoBehaviour
 
     // カウントダウン機能のための変数
     private float countdownTime = 2f;
-    private float countdownTime2 = 1f;
-    public float captureDelay = 1f; // 背景撮影までの遅延時間（秒）
+    private float backgroundCountdown = 5f;// 背景撮影までの遅延時間（秒）
     private bool isCountingDown = false;
     private bool DropCountDownStart = false;
     public Text countdownText;
@@ -77,20 +75,15 @@ public class CreateManager : MonoBehaviour
     public AudioSource camera;
     public AudioSource count;
 
-    void Init()
-    {
-        string[] files = Directory.GetFiles(
-            @"Assets/Resources", "*.png", SearchOption.AllDirectories
-            ).ToArray();
-        file_length = files.Length;
-    }
+    public int sabun1 = 40;
+
     void Awake()
     {
         if (webCamTexture)
         {
             webCamTexture.Stop();
         }
-        // classifier
+        // (顔検出？)
         FileStorage storageFaces = new FileStorage(faces.text, FileStorage.Mode.Read | FileStorage.Mode.Memory);
         cascadeFaces = new CascadeClassifier();
         if (!cascadeFaces.Read(storageFaces.GetFirstTopLevelNode()))
@@ -102,46 +95,44 @@ public class CreateManager : MonoBehaviour
     {
 
         // 初期化処理
-    initialCameraPosition = mainCamera.transform.position;
+        initialCameraPosition = mainCamera.transform.position;
 
 
-    // Webカメラの開始
+        // Webカメラの開始
         InitWebCam();
 
         backgroundMat = new Mat();
         initialFrame = new Mat();
         diffMat = new Mat();
-    
-        Init();
 
- // 15秒後に自動で撮影を開始
- 
+         
+        //コルーチン動作
         StartCoroutine(DelayedCaptureAndCountdown(0f));
     }
 
      IEnumerator DelayedCaptureAndCountdown(float delay)
     {
-         isCountdownActive = true;
+        isCountdownActive = true;
         yield return new WaitForSeconds(delay);
 
-while (countdownTime2 > 0)
+        while (backgroundCountdown > 0)
         {
             countdownTextBackground.text = $"背景の撮影をします！カメラ外に出てください！";
-            countdownTextBackground2.text = $"撮影まで\n   {countdownTime2.ToString("F0")} 秒";
+            countdownTextBackground2.text = $"撮影まで\n   {backgroundCountdown.ToString("F0")} 秒";
             yield return new WaitForSeconds(1f);
-            countdownTime2--;
+            backgroundCountdown--;
         }
         count.Play();//開始のSE
 
         CaptureBackground();
-         // カメラ映像の RawImage を非表示にする
-    if (cameraDisplay != null)
-    {
-        cameraDisplay.enabled = false; // RawImage を非表示にする
-        countdownTextBackground.enabled = false;
-        countdownTextBackground2.enabled = false;
-        Warning.enabled = false;
-    }
+        // カメラ映像の RawImage を非表示にする
+        if (cameraDisplay != null)
+        {
+            cameraDisplay.enabled = false; // RawImage を非表示にする
+            countdownTextBackground.enabled = false;
+            countdownTextBackground2.enabled = false;
+            Warning.enabled = false;
+        }
          isCountdownActive = false;
 
         StartCoroutine(StartCountdown());
@@ -149,7 +140,10 @@ while (countdownTime2 > 0)
 
    void Update()
 {
-    if (CheckGameOver(people))
+        //GameObject.Find("Canvas2").transform.Find("r1").GetComponent<RawImage>().texture = OpenCvSharp.Unity.MatToTexture(backgroundMat);
+        //GameObject.Find("Canvas2").transform.Find("r2").GetComponent<RawImage>().texture = OpenCvSharp.Unity.MatToTexture(initialFrame);
+        //GameObject.Find("Canvas2").transform.Find("r3").GetComponent<RawImage>().texture = OpenCvSharp.Unity.MatToTexture(diffMat);
+        if (CheckGameOver(people) && false)
     {
         if (people.Count > 0)
         {
@@ -169,12 +163,12 @@ while (countdownTime2 > 0)
 
         Mat grayMat = new Mat();
         Cv2.CvtColor(srcMat, grayMat, ColorConversionCodes.BGR2GRAY);
-
+        //GameObject.Find("Canvas2").transform.Find("r4").GetComponent<RawImage>().texture = OpenCvSharp.Unity.MatToTexture(grayMat);
         if (!initialFrame.Empty())
         {
             Cv2.Absdiff(grayMat, initialFrame, diffMat);
             Mat binaryMat = new Mat();
-            Cv2.Threshold(diffMat, binaryMat, 70, 255, ThresholdTypes.Binary);
+            Cv2.Threshold(diffMat, binaryMat, sabun1, 255, ThresholdTypes.Binary);
             ReduceNoise(binaryMat);
             Mat resultMat = new Mat();
             Cv2.BitwiseAnd(srcMat, srcMat, resultMat, binaryMat);
@@ -183,6 +177,9 @@ while (countdownTime2 > 0)
             Mat[] rgbaChannels = Cv2.Split(resultMat);
             rgbaChannels[3] = binaryMat;
             Cv2.Merge(rgbaChannels, resultMat);
+
+           //GameObject.Find("Canvas2").transform.Find("r5").GetComponent<RawImage>().texture = OpenCvSharp.Unity.MatToTexture(binaryMat);
+           //GameObject.Find("Canvas2").transform.Find("r6").GetComponent<RawImage>().texture = OpenCvSharp.Unity.MatToTexture(resultMat);
 
             if (this.dstTexture == null || this.dstTexture.width != resultMat.Width || this.dstTexture.height != resultMat.Height)
             {
@@ -518,32 +515,37 @@ void ReduceNoise(Mat binaryMat)
     // リソースの解放
     kernel.Dispose();
     erodedMat.Dispose();
+
+
+
 }
-public Vector2 GetFacePosition()
-{
-    if (cascadeFaces == null) return Vector2.zero;
 
-    WebCamTexture input = FindObjectOfType<CreateManager>().webCamTexture;
-    Mat image = OpenCvSharp.Unity.TextureToMat(input);
-    Mat gray = image.CvtColor(ColorConversionCodes.BGR2GRAY);
-    Cv2.EqualizeHist(gray, gray);
-    OpenCvSharp.Rect[] rawFaces = cascadeFaces.DetectMultiScale(gray, 1.1, 6);
 
-    if (rawFaces.Length > 0)
-    {
-        var face = rawFaces[0];
-        var cx = face.TopLeft.X + (face.Width / 2f);
-        var cy = face.TopLeft.Y + (face.Height / 2f);
+//public Vector2 GetFacePosition()
+//{
+//    if (cascadeFaces == null) return Vector2.zero;
 
-        Vector2 detectedPosition = new Vector2(cx / gray.Width, 1 - cy / gray.Height);
-        // 平滑化
-        lastFacePosition = Vector2.Lerp(lastFacePosition, detectedPosition, smoothingFactor);
-        return lastFacePosition;
-    }
+//    WebCamTexture input = FindObjectOfType<CreateManager>().webCamTexture;
+//    Mat image = OpenCvSharp.Unity.TextureToMat(input);
+//    Mat gray = image.CvtColor(ColorConversionCodes.BGR2GRAY);
+//    Cv2.EqualizeHist(gray, gray);
+//    OpenCvSharp.Rect[] rawFaces = cascadeFaces.DetectMultiScale(gray, 1.1, 6);
 
-    return Vector2.zero;
-} 
- void InitWebCam()
+//    if (rawFaces.Length > 0)
+//    {
+//        var face = rawFaces[0];
+//        var cx = face.TopLeft.X + (face.Width / 2f);
+//        var cy = face.TopLeft.Y + (face.Height / 2f);
+
+//        Vector2 detectedPosition = new Vector2(cx / gray.Width, 1 - cy / gray.Height);
+//        // 平滑化
+//        lastFacePosition = Vector2.Lerp(lastFacePosition, detectedPosition, smoothingFactor);
+//        return lastFacePosition;
+//    }
+
+//    return Vector2.zero;
+//} 
+void InitWebCam()
 {
         if (webCamTexture)
         {

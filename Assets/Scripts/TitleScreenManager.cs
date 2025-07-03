@@ -23,6 +23,8 @@ public class TitleScreenManager : MonoBehaviour
         rulesPanel.SetActive(true);
         // カウントダウンを開始
         StartCoroutine(CountdownAndStartGame());
+        //スリープを無効化
+        this.GetComponent<inSleep>().set_isSleep(false);
     }
 
     private IEnumerator CountdownAndStartGame()

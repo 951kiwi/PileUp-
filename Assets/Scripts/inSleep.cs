@@ -5,8 +5,11 @@ using UnityEngine;
 
 public class inSleep : MonoBehaviour
 {
-    public float inactivityThreshold = 5f;  // 操作がないとみなす時間（秒）
+    [SerializeField, Header("操作がないとみなす時間（秒）")]
+    [Tooltip("この秒数を超えて入力がなければ非アクティブになります")]
+    private float inactivityThreshold = 5f;
     public float lastInputTime;            // 最後の入力時間
+    private bool isSleep = true;
 
     // Start is called before the first frame update
     void Start()
@@ -27,12 +30,17 @@ public class inSleep : MonoBehaviour
         }
 
         // 一定時間操作がなければシーンを重ねる
-        if (Time.time - lastInputTime >= inactivityThreshold)
+        if (Time.time - lastInputTime >= inactivityThreshold && isSleep)
         {
             AdditiveSceneOverlay();
         }
 
         
+    }
+
+    public void set_isSleep(bool Bool)
+    {
+        isSleep = Bool;
     }
     // シーンを重ねる（Additiveシーンをロードする）
     void AdditiveSceneOverlay()

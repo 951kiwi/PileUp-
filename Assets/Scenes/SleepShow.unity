@@ -230,7 +230,7 @@ MonoBehaviour:
   imageDisplay: {fileID: 556966905}
   ScoreText: {fileID: 1273467572}
   DateText: {fileID: 1970908259}
-  ShowPlay: 1
+  ShowPlay: 3
   fadeDuration: 1
   displayDuration: 1
 --- !u!4 &109527114
