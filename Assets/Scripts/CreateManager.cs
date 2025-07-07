@@ -10,32 +10,21 @@ using UnityEngine.UI;
 
 public class CreateManager : MonoBehaviour
 {
-    private Vector2 lastFacePosition = Vector2.zero;
-    private float smoothingFactor = 0.5f; // スムージングの係数
-    public GameObject MaskPreviewObject;
-    private SpriteRenderer maskSpriteRenderer;
-    public TextAsset faces;
-    public RectTransform canvasRectTransform;
-    private CascadeClassifier cascadeFaces;
     public RawImage rawImage; // RawImage UI 要素　撮影前
     public RawImage cameraDisplay; // カメラ映像を表示する RawImage
-    public Image Warning;//警告表示の背景
     public WebCamTexture webCamTexture; // WebCamTextureを使ってカメラ映像を取得
-    private bool isCountdownActive = false; // カウントダウンがアクティブかどうかを示すフラグ
 
-    private Texture2D previewTexture;
     public static float FinalResult = 0;//最終結果
     public static string FinalformattedNumber;
 
     // カメラとプレビューオブジェクトの上昇速度
-    public float cameraRiseSpeed = 0.1f;
+    [Tooltip("カメラが上昇する速さ(秒)")]
+    private float cameraRiseSpeed = 1f;
     // カメラの調整に関する変数
     public float cameraOffset = 5f; // カメラが積まれた画像の上に位置するオフセット
     public float previewObjectOffset = 0.5f; // プレビューオブジェクトのオフセット
 
-    private GameObject obj;
     public List<GameObject> people;
-    public bool isFall;
     public float pivotHeight = 15; // 生成位置の基準
     public Camera mainCamera;
     private Vector3 initialCameraPosition;
@@ -43,7 +32,6 @@ public class CreateManager : MonoBehaviour
 
     Texture2D dstTexture;
     public Sprite capturedSprite;
-    bool isBackgroundCaptured = false; // 背景画像がキャプチャされたかを示すフラグ
     public float maxObjectHeight = 0f; // 積まれた画像の最大高さ
 
     // スコア表示用
@@ -83,39 +71,28 @@ public class CreateManager : MonoBehaviour
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         //コルーチン動作
+        //cameraDisplay.enabled = false;
         StartCoroutine(StartCountdown());
     }
 
-    IEnumerator DelayedCaptureAndCountdown(float delay)
-    {
-        isCountdownActive = true;
-        yield return new WaitForSeconds(delay);
-
-        while (backgroundCountdown > 0)
-        {
-            countdownTextBackground.text = $"背景の撮影をします！カメラ外に出てください！";
-            countdownTextBackground2.text = $"撮影まで\n   {backgroundCountdown.ToString("F0")} 秒";
-            yield return new WaitForSeconds(1f);
-            backgroundCountdown--;
-        }
-        count.Play();//開始のSE
-
-        // カメラ映像の RawImage を非表示にする
-        if (cameraDisplay != null)
-        {
-            cameraDisplay.enabled = false; // RawImage を非表示にする
-            countdownTextBackground.enabled = false;
-            countdownTextBackground2.enabled = false;
-            Warning.enabled = false;
-        }
-        isCountdownActive = false;
-
-        StartCoroutine(StartCountdown());
-    }
 
     void Update()
     {
+        //ゲームオーバー判定
+        if (CheckGameOver(people) && people.Count > 0)
+        {
+            FinalResult = maxObjectHeight;
+            FinalformattedNumber = FinalResult.ToString("F2");
+            StopCamera();
+            ScreenShot screenshot = GetComponent<ScreenShot>();
+            screenshot.TakeScreenshot(ScreenShotCamera);
+            SceneManager.LoadScene("GameOver");
+        }
 
+        if (rawImage != null)
+        {
+            rawImage.texture = gameManager.resultTexture;
+        }
     }
 
     IEnumerator StartCountdown()
@@ -174,8 +151,10 @@ public class CreateManager : MonoBehaviour
             maxObjectHeight = people.Max(obj => obj.transform.position.y + obj.GetComponent<SpriteRenderer>().bounds.size.y / 2);
             // カメラの高さを設定
             Vector3 cameraPosition = mainCamera.transform.position;
-            cameraPosition.y = maxObjectHeight + 7; // 適切なオフセットを追加
-            mainCamera.transform.position = cameraPosition;
+            // 目標位置（Y座標だけ変更）
+            Vector3 targetPos = new Vector3(cameraPosition.x, maxObjectHeight + 7, cameraPosition.z);
+            // 徐々に近づく（0.1fは補間速度。値を調整して滑らかさを制御）
+            mainCamera.transform.position = Vector3.Lerp(cameraPosition, targetPos, Time.deltaTime * 3f);
 
             Vector2 v2 = new Vector2(mainCamera.ScreenToWorldPoint(Input.mousePosition).x, 15 + maxObjectHeight);
 
@@ -193,7 +172,7 @@ public class CreateManager : MonoBehaviour
         isCountingDown = false;
 
         // 次の撮影までの待機時間
-        float waitTime = 7f; // 10秒の待機時間
+        float waitTime = 7f; // 7秒の待機時間
 
         // RawImage を表示する
         if (rawImage != null)
@@ -215,9 +194,7 @@ public class CreateManager : MonoBehaviour
                 {
                     maxObjectHeight = people.Max(obj => obj.transform.position.y + obj.GetComponent<SpriteRenderer>().bounds.size.y / 2);
                     // カメラの高さを設定
-                    Vector3 cameraPosition = mainCamera.transform.position;
-                    cameraPosition.y = maxObjectHeight + 7; // 適切なオフセットを追加
-                    mainCamera.transform.position = cameraPosition;
+                    StartCoroutine(SlideCameraToY(maxObjectHeight + 7, cameraRiseSpeed));
 
                     Vector2 v2 = new Vector2(5, 15 + maxObjectHeight);
 
@@ -254,21 +231,41 @@ public class CreateManager : MonoBehaviour
             StartCoroutine(StartCountdown());
         }
     }
+    IEnumerator SlideCameraToY(float targetY, float duration)
+    {
+        float elapsed = 0f;
+        Vector3 start = mainCamera.transform.position;
+        Vector3 end = new Vector3(start.x, targetY, start.z);
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            // イージング：イーズインアウト（加減速）
+            t = t * t * (3f - 2f * t);  // SmoothStep
+
+            mainCamera.transform.position = Vector3.Lerp(start, end, t);
+            yield return null;
+        }
+
+        mainCamera.transform.position = end; // 最後にピタリ
+    }
 
     void CaptureImage()
     {
         Mat resultMat = gameManager.resultMat;
 
-            if (this.dstTexture == null || this.dstTexture.width != resultMat.Width || this.dstTexture.height != resultMat.Height)
-            {
-                this.dstTexture = new Texture2D(resultMat.Width, resultMat.Height, TextureFormat.RGBA32, false);
-            }
-            OpenCvSharp.Unity.MatToTexture(resultMat, this.dstTexture);
-            capturedSprite = Sprite.Create(this.dstTexture, new UnityEngine.Rect(0, 0, this.dstTexture.width, this.dstTexture.height), Vector2.zero);
+        if (this.dstTexture == null || this.dstTexture.width != resultMat.Width || this.dstTexture.height != resultMat.Height)
+        {
+            this.dstTexture = new Texture2D(resultMat.Width, resultMat.Height, TextureFormat.RGBA32, false);
+        }
+        OpenCvSharp.Unity.MatToTexture(resultMat, this.dstTexture);
+        capturedSprite = Sprite.Create(this.dstTexture, new UnityEngine.Rect(0, 0, this.dstTexture.width, this.dstTexture.height), Vector2.zero);
 
-            CreatePreviewObject(capturedSprite);
+        CreatePreviewObject(capturedSprite);
 
-        
+
     }
 
     void CreatePreviewObject(Sprite img)

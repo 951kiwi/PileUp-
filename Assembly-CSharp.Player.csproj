@@ -231,8 +231,8 @@
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\PInvoke\core\NativeMethods_core.cs" />
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\Cv2\Cv2_optflow.cs" />
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\modules\core\Enum\CpuFeatures.cs" />
-    <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\Vector\VectorOfVectorInt.cs" />
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\Delegate\MatForeachFunction.cs" />
+    <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\Vector\VectorOfVectorInt.cs" />
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\modules\shape\ShapeDistanceExtractor.cs" />
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\modules\flann\IndexParams\SavedIndexParams.cs" />
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\PInvoke\features2d\NativeMethods_features2d.cs" />

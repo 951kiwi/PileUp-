@@ -24,9 +24,11 @@ public class GameManager : MonoBehaviour
     public int fallKernelSize = 5;
 
     // フィールド変数に追加しておく
-    private Texture2D backgroundTexture, resultTexture, binaryTexture, initialFrameTexture, diffTexture;
-    private Texture2D binaryTexture1, binaryTexture2, binaryTexture3, binaryTexture4, binaryTexture5, binaryTexture6;
-    public Mat grayMat, binaryMat, resultMat, noiseMat;
+    private Texture2D backgroundTexture, binaryTexture, initialFrameTexture, diffTexture;
+    public Texture2D resultTexture;
+    Texture2D binaryTexture1, binaryTexture2, binaryTexture3, binaryTexture4, binaryTexture5, binaryTexture6;
+    public Mat grayMat, binaryMat, noiseMat;
+    public Mat resultMat;
     private Mat backgroundMat, initialFrame, diffMat, binaryMat1, binaryMat2, binaryMat3, binaryMat4, binaryMat5, binaryMat6;
     private Mat[] rgbaChannels = new Mat[4];
 

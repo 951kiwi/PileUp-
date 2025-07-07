@@ -144,20 +144,20 @@ public class CreateManager2 : MonoBehaviour
         //GameObject.Find("Canvas2").transform.Find("r2").GetComponent<RawImage>().texture = OpenCvSharp.Unity.MatToTexture(initialFrame);
         //GameObject.Find("Canvas2").transform.Find("r3").GetComponent<RawImage>().texture = OpenCvSharp.Unity.MatToTexture(diffMat);
         if (CheckGameOver(people) && false)
-    {
-        if (people.Count > 0)
         {
-        maxObjectHeight = people.Max(obj => obj.transform.position.y + obj.GetComponent<SpriteRenderer>().bounds.size.y / 2);
-        FinalResult = maxObjectHeight;
-        FinalformattedNumber = FinalResult.ToString("F2"); 
-        }
-        StopCamera();
+            if (people.Count > 0)
+            {
+                maxObjectHeight = people.Max(obj => obj.transform.position.y + obj.GetComponent<SpriteRenderer>().bounds.size.y / 2);
+                FinalResult = maxObjectHeight;
+                FinalformattedNumber = FinalResult.ToString("F2");
+            }
+            StopCamera();
             ScreenShot screenshot = GetComponent<ScreenShot>();
             screenshot.TakeScreenshot(ScreenShotCamera);
             SceneManager.LoadScene("GameOver");
-    }
+        }
 
-    if (!DropCountDownStart)
+        if (!DropCountDownStart)
     {
         Mat srcMat = OpenCvSharp.Unity.TextureToMat(this.webCamTexture);
 

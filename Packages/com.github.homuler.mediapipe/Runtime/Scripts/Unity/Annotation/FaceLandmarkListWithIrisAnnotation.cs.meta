@@ -1,14 +1,3 @@
-fileFormatVersion: 2
-guid: e3266a44159f9c0f495c095447ca1e5f
-MonoImporter:
-  externalObjects: {}
-  serializedVersion: 2
-  defaultReferences:
-  - _faceLandmarkListAnnotation: {instanceID: 0}
-  - _leftIrisLandmarkListAnnotation: {instanceID: 0}
-  - _rightIrisLandmarkListAnnotation: {instanceID: 0}
-  executionOrder: 0
-  icon: {instanceID: 0}
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+version https://git-lfs.github.com/spec/v1
+oid sha256:873b7cc17a4e3a3756fc52025af177bd6c313d1c3a1c91805eace208221cabad
+size 396
