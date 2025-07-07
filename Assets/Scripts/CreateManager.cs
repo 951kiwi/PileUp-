@@ -16,19 +16,16 @@ public class CreateManager : MonoBehaviour
     private SpriteRenderer maskSpriteRenderer;
     public TextAsset faces;
     public RectTransform canvasRectTransform;
-     private CascadeClassifier cascadeFaces;
-      public RawImage rawImage; // RawImage UI 要素　撮影前
-      public RawImage cameraDisplay; // カメラ映像を表示する RawImage
-      public Image Warning;//警告表示の背景
+    private CascadeClassifier cascadeFaces;
+    public RawImage rawImage; // RawImage UI 要素　撮影前
+    public RawImage cameraDisplay; // カメラ映像を表示する RawImage
+    public Image Warning;//警告表示の背景
     public WebCamTexture webCamTexture; // WebCamTextureを使ってカメラ映像を取得
-     private bool isCountdownActive = false; // カウントダウンがアクティブかどうかを示すフラグ
-     
+    private bool isCountdownActive = false; // カウントダウンがアクティブかどうかを示すフラグ
+
     private Texture2D previewTexture;
     public static float FinalResult = 0;//最終結果
-    public static string FinalformattedNumber; 
-    private Mat backgroundMat; // 背景画像のMatを保持
-    private Mat initialFrame;
-    private Mat diffMat;
+    public static string FinalformattedNumber;
 
     // カメラとプレビューオブジェクトの上昇速度
     public float cameraRiseSpeed = 0.1f;
@@ -77,40 +74,19 @@ public class CreateManager : MonoBehaviour
 
     public int sabun1 = 40;
 
+    private GameManager gameManager;
+
     void Awake()
     {
-        if (webCamTexture)
-        {
-            webCamTexture.Stop();
-        }
-        // (顔検出？)
-        FileStorage storageFaces = new FileStorage(faces.text, FileStorage.Mode.Read | FileStorage.Mode.Memory);
-        cascadeFaces = new CascadeClassifier();
-        if (!cascadeFaces.Read(storageFaces.GetFirstTopLevelNode()))
-        {
-            throw new System.Exception("CascadeRecognizer.Initialize: Failed to load faces cascade classifier");
-        }
     }
     void Start()
     {
-
-        // 初期化処理
-        initialCameraPosition = mainCamera.transform.position;
-
-
-        // Webカメラの開始
-        InitWebCam();
-
-        backgroundMat = new Mat();
-        initialFrame = new Mat();
-        diffMat = new Mat();
-
-         
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         //コルーチン動作
-        StartCoroutine(DelayedCaptureAndCountdown(0f));
+        StartCoroutine(StartCountdown());
     }
 
-     IEnumerator DelayedCaptureAndCountdown(float delay)
+    IEnumerator DelayedCaptureAndCountdown(float delay)
     {
         isCountdownActive = true;
         yield return new WaitForSeconds(delay);
@@ -124,7 +100,6 @@ public class CreateManager : MonoBehaviour
         }
         count.Play();//開始のSE
 
-        CaptureBackground();
         // カメラ映像の RawImage を非表示にする
         if (cameraDisplay != null)
         {
@@ -133,332 +108,245 @@ public class CreateManager : MonoBehaviour
             countdownTextBackground2.enabled = false;
             Warning.enabled = false;
         }
-         isCountdownActive = false;
+        isCountdownActive = false;
 
         StartCoroutine(StartCountdown());
     }
 
-   void Update()
-{
-        //GameObject.Find("Canvas2").transform.Find("r1").GetComponent<RawImage>().texture = OpenCvSharp.Unity.MatToTexture(backgroundMat);
-        //GameObject.Find("Canvas2").transform.Find("r2").GetComponent<RawImage>().texture = OpenCvSharp.Unity.MatToTexture(initialFrame);
-        //GameObject.Find("Canvas2").transform.Find("r3").GetComponent<RawImage>().texture = OpenCvSharp.Unity.MatToTexture(diffMat);
-        if (CheckGameOver(people) && false)
+    void Update()
     {
-        if (people.Count > 0)
-        {
-        maxObjectHeight = people.Max(obj => obj.transform.position.y + obj.GetComponent<SpriteRenderer>().bounds.size.y / 2);
-        FinalResult = maxObjectHeight;
-        FinalformattedNumber = FinalResult.ToString("F2"); 
-        }
-        StopCamera();
-            ScreenShot screenshot = GetComponent<ScreenShot>();
-            screenshot.TakeScreenshot(ScreenShotCamera);
-            SceneManager.LoadScene("GameOver");
-    }
 
-    if (!DropCountDownStart)
-    {
-        Mat srcMat = OpenCvSharp.Unity.TextureToMat(this.webCamTexture);
-
-        Mat grayMat = new Mat();
-        Cv2.CvtColor(srcMat, grayMat, ColorConversionCodes.BGR2GRAY);
-        //GameObject.Find("Canvas2").transform.Find("r4").GetComponent<RawImage>().texture = OpenCvSharp.Unity.MatToTexture(grayMat);
-        if (!initialFrame.Empty())
-        {
-            Cv2.Absdiff(grayMat, initialFrame, diffMat);
-            Mat binaryMat = new Mat();
-            Cv2.Threshold(diffMat, binaryMat, sabun1, 255, ThresholdTypes.Binary);
-            ReduceNoise(binaryMat);
-            Mat resultMat = new Mat();
-            Cv2.BitwiseAnd(srcMat, srcMat, resultMat, binaryMat);
-            AdjustSaturation(resultMat, 1.0);
-            Cv2.CvtColor(resultMat, resultMat, ColorConversionCodes.RGB2RGBA);
-            Mat[] rgbaChannels = Cv2.Split(resultMat);
-            rgbaChannels[3] = binaryMat;
-            Cv2.Merge(rgbaChannels, resultMat);
-
-           //GameObject.Find("Canvas2").transform.Find("r5").GetComponent<RawImage>().texture = OpenCvSharp.Unity.MatToTexture(binaryMat);
-           //GameObject.Find("Canvas2").transform.Find("r6").GetComponent<RawImage>().texture = OpenCvSharp.Unity.MatToTexture(resultMat);
-
-            if (this.dstTexture == null || this.dstTexture.width != resultMat.Width || this.dstTexture.height != resultMat.Height)
-            {
-                this.dstTexture = new Texture2D(resultMat.Width, resultMat.Height, TextureFormat.RGBA32, false);
-            }
-            OpenCvSharp.Unity.MatToTexture(resultMat, this.dstTexture);
-            capturedSprite = Sprite.Create(this.dstTexture, new UnityEngine.Rect(0, 0, this.dstTexture.width, this.dstTexture.height), Vector2.zero);
-
-            if (rawImage != null)
-            {
-                rawImage.texture = this.dstTexture;
-            }
-        }
-    }
-
-    if (this.webCamTexture == null || this.webCamTexture.width <= 16 || this.webCamTexture.height <= 16) return;
-
-}
-
-
-   private void CaptureBackground()
-    {
-        if (!isBackgroundCaptured)
-        {
-            backgroundMat = OpenCvSharp.Unity.TextureToMat(this.webCamTexture);
-            Cv2.CvtColor(backgroundMat, initialFrame, ColorConversionCodes.BGR2GRAY);
-            isBackgroundCaptured = true;
-        }
     }
 
     IEnumerator StartCountdown()
-{
-    isCountingDown = true;
-
-    while (countdownTime > 0)
     {
-        Debug.Log("撮影前カウントダウン中: " + countdownTime);
-        countdownText.text = "人型撮影まで: " +  countdownTime.ToString("F0");
-        yield return new WaitForSeconds(1f);
-        countdownTime--;
+        isCountingDown = true;
+
+        while (countdownTime > 0)
+        {
+            Debug.Log("撮影前カウントダウン中: " + countdownTime);
+            countdownText.text = "人型撮影まで: " + countdownTime.ToString("F0");
+            yield return new WaitForSeconds(1f);
+            countdownTime--;
+        }
+
+        countdownText.text = "撮影中...";
+        Debug.Log("撮影中...");
+        CaptureImage(); // 画像を撮影
+        isCountingDown = false;
+
+        // 画像を撮影した後、すぐに落下カウントダウンを開始
+        if (!CheckGameOver(people))
+        {
+            // RawImage を非表示にする
+            if (rawImage != null)
+            {
+                rawImage.gameObject.SetActive(false);
+            }
+            DropCountDownStart = true; // 落下前カウントダウン開始
+            StartCoroutine(StartDropCountdown());
+        }
     }
 
-    countdownText.text = "撮影中...";
-    Debug.Log("撮影中...");
-    CaptureImage(); // 画像を撮影
-    camera.Play();
-    isCountingDown = false;
-
-    // 画像を撮影した後、すぐに落下カウントダウンを開始
-    if (!CheckGameOver(people))
+    IEnumerator StartDropCountdown()
     {
-        // RawImage を非表示にする
-if (rawImage != null)
-{
-    rawImage.gameObject.SetActive(false);
-}
-        DropCountDownStart = true; // 落下前カウントダウン開始
-        StartCoroutine(StartDropCountdown());
-    }
-}
-
-   IEnumerator StartDropCountdown()
-{
-    // プレビューオブジェクトの位置を更新
+        // プレビューオブジェクトの位置を更新
         previewObject.transform.position = new Vector2(9, maxObjectHeight + 15);
 
-    if (isCountingDown)
-        yield break;
+        if (isCountingDown)
+            yield break;
 
-    isCountingDown = true;
+        isCountingDown = true;
 
-    countdownTime = 1f; // カウントダウンをリセット
+        countdownTime = 1f; // カウントダウンをリセット
 
-    while (countdownTime > 0)
-    {
-        Debug.Log("落下前カウントダウン: " + countdownTime);
-        countdownText.text = "落下まで: " +  countdownTime.ToString("F0");
-        yield return new WaitForSeconds(1f);
-        countdownTime--;
-    }
-
-    // すべての積まれたオブジェクトの中で最も高いオブジェクトのY座標を取得
-    if (people.Count > 0)
+        while (countdownTime > 0)
         {
-        maxObjectHeight = people.Max(obj => obj.transform.position.y + obj.GetComponent<SpriteRenderer>().bounds.size.y / 2);
-         // カメラの高さを設定
-        Vector3 cameraPosition = mainCamera.transform.position;
-        cameraPosition.y = maxObjectHeight + 7; // 適切なオフセットを追加
-        mainCamera.transform.position = cameraPosition;
-
-        Vector2 v2 = new Vector2(mainCamera.ScreenToWorldPoint(Input.mousePosition).x, 15 + maxObjectHeight);
-
-        if (previewObject != null)
-        {
-            previewObject.transform.position = v2;
-        }
+            Debug.Log("落下前カウントダウン: " + countdownTime);
+            countdownText.text = "落下まで: " + countdownTime.ToString("F0");
+            yield return new WaitForSeconds(1f);
+            countdownTime--;
         }
 
-    countdownText.text = "落下中...";
-    Debug.Log("落下中...");
-    StartDrop(); // 落下を開始
-    audioSource.Play();//落下のSE
-
-    isCountingDown = false;
-
-    // 次の撮影までの待機時間
-    float waitTime = 7f; // 10秒の待機時間
-
-   // RawImage を表示する
-if (rawImage != null)
-{
-    rawImage.gameObject.SetActive(true);
-}
-    DropCountDownStart = false; // 落下前カウントダウン終了
-
-
-    while (waitTime > 0)
-    {
-        countdownText.text = "次の人型撮影まで: " + waitTime.ToString("F0") + "秒";
-        yield return new WaitForSeconds(1f);
-
-        if(waitTime == 5){
-             // すべての積まれたオブジェクトの中で最も高いオブジェクトのY座標を取得
-    if (people.Count > 0)
-        {
-        maxObjectHeight = people.Max(obj => obj.transform.position.y + obj.GetComponent<SpriteRenderer>().bounds.size.y / 2);
-         // カメラの高さを設定
-        Vector3 cameraPosition = mainCamera.transform.position;
-        cameraPosition.y = maxObjectHeight + 7; // 適切なオフセットを追加
-        mainCamera.transform.position = cameraPosition;
-
-        Vector2 v2 = new Vector2(5, 15 + maxObjectHeight);
-
-        if (previewObject != null)
-        {
-            previewObject.transform.position = v2;
-        }
-
-        // RawImage の RectTransform を取得
-            RectTransform rectTransform = rawImage.GetComponent<RectTransform>();
-
-            // 現在の Y 座標を保持
-            float currentXPosition = rectTransform.anchoredPosition.x;
-
-            // 新しい位置を設定 (例: 新しい x 座標を指定し、y 座標はそのままにする)
-            Vector2 newPosition = new Vector2(currentXPosition, maxObjectHeight + 400);
-            rectTransform.anchoredPosition = newPosition;
-        
-        }
-
-        // ここでスコアを加算
-        score = maxObjectHeight;
-        string formattedNumber = score.ToString("F2"); 
-        scoreText.text = "Score: " + formattedNumber + "M";
-        }
-
-        waitTime--;
-    }
-
-
-    // 待機時間後に撮影カウントダウンを開始
-    if (!CheckGameOver(people))
-    {
-        StartCoroutine(StartCountdown());
-}
-}
-
-    void CaptureImage()
-{
-    Mat srcMat = OpenCvSharp.Unity.TextureToMat(this.webCamTexture);
-
-    Mat grayMat = new Mat();
-    Cv2.CvtColor(srcMat, grayMat, ColorConversionCodes.BGR2GRAY);
-
-    if (!initialFrame.Empty())
-    {
-        Cv2.Absdiff(grayMat, initialFrame, diffMat);
-            Mat binaryMat = new Mat();
-            Cv2.Threshold(diffMat, binaryMat, 70, 255, ThresholdTypes.Binary);
-            ReduceNoise(binaryMat);
-            Mat resultMat = new Mat();
-            Cv2.BitwiseAnd(srcMat, srcMat, resultMat, binaryMat);
-            AdjustSaturation(resultMat, 1.0);
-            Cv2.CvtColor(resultMat, resultMat, ColorConversionCodes.RGB2RGBA);
-            Mat[] rgbaChannels = Cv2.Split(resultMat);
-            rgbaChannels[3] = binaryMat;
-            Cv2.Merge(rgbaChannels, resultMat);
-
-            if (this.dstTexture == null || this.dstTexture.width != resultMat.Width || this.dstTexture.height != resultMat.Height)
-            {
-                this.dstTexture = new Texture2D(resultMat.Width, resultMat.Height, TextureFormat.RGBA32, false);
-            }
-            OpenCvSharp.Unity.MatToTexture(resultMat, this.dstTexture);
-            capturedSprite = Sprite.Create(this.dstTexture, new UnityEngine.Rect(0, 0, this.dstTexture.width, this.dstTexture.height), Vector2.zero);
-
-        CreatePreviewObject(capturedSprite);
-
-        grayMat.Dispose();
-        binaryMat.Dispose();
-        resultMat.Dispose();
-    }
-}
-
-void CreatePreviewObject(Sprite img)
-{
-    isPreviewing = true;
-    previewObject = new GameObject("PreviewObject");
-
-    // テクスチャのコピーを作成
-    Texture2D textureCopy = new Texture2D(img.texture.width, img.texture.height, img.texture.format, false);
-    textureCopy.SetPixels(img.texture.GetPixels());
-    textureCopy.Apply();
-
-    // 新しいスプライトを作成
-    Sprite newSprite = Sprite.Create(textureCopy, new UnityEngine.Rect(0, 0, textureCopy.width, textureCopy.height), Vector2.zero);
-
-    // スプライトレンダラーを追加してスプライトを設定
-    SpriteRenderer spriteRenderer = previewObject.AddComponent<SpriteRenderer>();
-    spriteRenderer.sprite = newSprite;
-
-    // サイズのスケールを設定（例: 0.5倍のサイズにする）
-    previewObject.transform.localScale = new Vector3(-2.5f, 2.5f, 1f);
-
-    // PolygonColliderを追加し、画像の透明部分を無視する
-    PolygonCollider2D polygonCollider = previewObject.AddComponent<PolygonCollider2D>();
-    polygonCollider.isTrigger = false; // 必要に応じて変更
-
-    PhysicsMaterial2D highFrictionMaterial = Resources.Load<PhysicsMaterial2D>("New Physic Material");
-    if (highFrictionMaterial != null)
-    {
-        polygonCollider.sharedMaterial = highFrictionMaterial;
-    }
-
-    // Rigidbody2Dを追加
-    Rigidbody2D rb2D = previewObject.AddComponent<Rigidbody2D>();
-    rb2D.gravityScale = 0.0f; // 初期値として重力を無効にする
-    rb2D.isKinematic = false; // 物理シミュレーションを有効にする
-}
-
-
-void StartDrop()
-{
-    if (previewObject != null)
-    {
-        var rb2D = previewObject.GetComponent<Rigidbody2D>();
-        if (rb2D != null)
-        {
-            rb2D.gravityScale = 1.0f; // 重力を有効にする
-            rb2D.mass = 10f; // 適切な質量値を設定
-            rb2D.isKinematic = false; // 物理シミュレーションを有効にする
-            rb2D.collisionDetectionMode = CollisionDetectionMode2D.Continuous; // 衝突検出モードを Continuous に設定
-        }
-        else
-        {
-            Debug.LogError("Rigidbody2D が見つかりません。");
-        }
-
-        // 積まれた画像の中で最も高いオブジェクトのY座標を取得
+        // すべての積まれたオブジェクトの中で最も高いオブジェクトのY座標を取得
         if (people.Count > 0)
         {
             maxObjectHeight = people.Max(obj => obj.transform.position.y + obj.GetComponent<SpriteRenderer>().bounds.size.y / 2);
-            
             // カメラの高さを設定
             Vector3 cameraPosition = mainCamera.transform.position;
             cameraPosition.y = maxObjectHeight + 7; // 適切なオフセットを追加
             mainCamera.transform.position = cameraPosition;
+
+            Vector2 v2 = new Vector2(mainCamera.ScreenToWorldPoint(Input.mousePosition).x, 15 + maxObjectHeight);
+
+            if (previewObject != null)
+            {
+                previewObject.transform.position = v2;
+            }
         }
 
-        // プレビューオブジェクトの位置を固定
+        countdownText.text = "落下中...";
+        Debug.Log("落下中...");
+        StartDrop(); // 落下を開始
+        audioSource.Play();//落下のSE
+
+        isCountingDown = false;
+
+        // 次の撮影までの待機時間
+        float waitTime = 7f; // 10秒の待機時間
+
+        // RawImage を表示する
+        if (rawImage != null)
+        {
+            rawImage.gameObject.SetActive(true);
+        }
+        DropCountDownStart = false; // 落下前カウントダウン終了
+
+
+        while (waitTime > 0)
+        {
+            countdownText.text = "次の人型撮影まで: " + waitTime.ToString("F0") + "秒";
+            yield return new WaitForSeconds(1f);
+
+            if (waitTime == 5)
+            {
+                // すべての積まれたオブジェクトの中で最も高いオブジェクトのY座標を取得
+                if (people.Count > 0)
+                {
+                    maxObjectHeight = people.Max(obj => obj.transform.position.y + obj.GetComponent<SpriteRenderer>().bounds.size.y / 2);
+                    // カメラの高さを設定
+                    Vector3 cameraPosition = mainCamera.transform.position;
+                    cameraPosition.y = maxObjectHeight + 7; // 適切なオフセットを追加
+                    mainCamera.transform.position = cameraPosition;
+
+                    Vector2 v2 = new Vector2(5, 15 + maxObjectHeight);
+
+                    if (previewObject != null)
+                    {
+                        previewObject.transform.position = v2;
+                    }
+
+                    // RawImage の RectTransform を取得
+                    RectTransform rectTransform = rawImage.GetComponent<RectTransform>();
+
+                    // 現在の Y 座標を保持
+                    float currentXPosition = rectTransform.anchoredPosition.x;
+
+                    // 新しい位置を設定 (例: 新しい x 座標を指定し、y 座標はそのままにする)
+                    Vector2 newPosition = new Vector2(currentXPosition, maxObjectHeight + 400);
+                    rectTransform.anchoredPosition = newPosition;
+
+                }
+
+                // ここでスコアを加算
+                score = maxObjectHeight;
+                string formattedNumber = score.ToString("F2");
+                scoreText.text = "Score: " + formattedNumber + "M";
+            }
+
+            waitTime--;
+        }
+
+
+        // 待機時間後に撮影カウントダウンを開始
+        if (!CheckGameOver(people))
+        {
+            StartCoroutine(StartCountdown());
+        }
+    }
+
+    void CaptureImage()
+    {
+        Mat resultMat = gameManager.resultMat;
+
+            if (this.dstTexture == null || this.dstTexture.width != resultMat.Width || this.dstTexture.height != resultMat.Height)
+            {
+                this.dstTexture = new Texture2D(resultMat.Width, resultMat.Height, TextureFormat.RGBA32, false);
+            }
+            OpenCvSharp.Unity.MatToTexture(resultMat, this.dstTexture);
+            capturedSprite = Sprite.Create(this.dstTexture, new UnityEngine.Rect(0, 0, this.dstTexture.width, this.dstTexture.height), Vector2.zero);
+
+            CreatePreviewObject(capturedSprite);
+
+        
+    }
+
+    void CreatePreviewObject(Sprite img)
+    {
+        isPreviewing = true;
+        previewObject = new GameObject("PreviewObject");
+
+        // テクスチャのコピーを作成
+        Texture2D textureCopy = new Texture2D(img.texture.width, img.texture.height, img.texture.format, false);
+        textureCopy.SetPixels(img.texture.GetPixels());
+        textureCopy.Apply();
+
+        // 新しいスプライトを作成
+        Sprite newSprite = Sprite.Create(textureCopy, new UnityEngine.Rect(0, 0, textureCopy.width, textureCopy.height), Vector2.zero);
+
+        // スプライトレンダラーを追加してスプライトを設定
+        SpriteRenderer spriteRenderer = previewObject.AddComponent<SpriteRenderer>();
+        spriteRenderer.sprite = newSprite;
+
+        // サイズのスケールを設定（例: 0.5倍のサイズにする）
+        previewObject.transform.localScale = new Vector3(-2.5f, 2.5f, 1f);
+
+        // PolygonColliderを追加し、画像の透明部分を無視する
+        PolygonCollider2D polygonCollider = previewObject.AddComponent<PolygonCollider2D>();
+        polygonCollider.isTrigger = false; // 必要に応じて変更
+
+        PhysicsMaterial2D highFrictionMaterial = Resources.Load<PhysicsMaterial2D>("New Physic Material");
+        if (highFrictionMaterial != null)
+        {
+            polygonCollider.sharedMaterial = highFrictionMaterial;
+        }
+
+        // Rigidbody2Dを追加
+        Rigidbody2D rb2D = previewObject.AddComponent<Rigidbody2D>();
+        rb2D.gravityScale = 0.0f; // 初期値として重力を無効にする
+        rb2D.isKinematic = false; // 物理シミュレーションを有効にする
+    }
+
+
+    void StartDrop()
+    {
         if (previewObject != null)
         {
-            previewObject.transform.position = new Vector3(9, maxObjectHeight + 15, 0); // 固定位置に設定
-        }
+            var rb2D = previewObject.GetComponent<Rigidbody2D>();
+            if (rb2D != null)
+            {
+                rb2D.gravityScale = 1.0f; // 重力を有効にする
+                rb2D.mass = 10f; // 適切な質量値を設定
+                rb2D.isKinematic = false; // 物理シミュレーションを有効にする
+                rb2D.collisionDetectionMode = CollisionDetectionMode2D.Continuous; // 衝突検出モードを Continuous に設定
+            }
+            else
+            {
+                Debug.LogError("Rigidbody2D が見つかりません。");
+            }
 
-        people.Add(previewObject);
-        previewObject = null;
+            // 積まれた画像の中で最も高いオブジェクトのY座標を取得
+            if (people.Count > 0)
+            {
+                maxObjectHeight = people.Max(obj => obj.transform.position.y + obj.GetComponent<SpriteRenderer>().bounds.size.y / 2);
+
+                // カメラの高さを設定
+                Vector3 cameraPosition = mainCamera.transform.position;
+                cameraPosition.y = maxObjectHeight + 7; // 適切なオフセットを追加
+                mainCamera.transform.position = cameraPosition;
+            }
+
+            // プレビューオブジェクトの位置を固定
+            if (previewObject != null)
+            {
+                previewObject.transform.position = new Vector3(9, maxObjectHeight + 15, 0); // 固定位置に設定
+            }
+
+            people.Add(previewObject);
+            previewObject = null;
+        }
+        countdownText.text = ""; // カウントダウン表示をリセット
     }
-    countdownText.text = ""; // カウントダウン表示をリセット
-}
 
     bool CheckGameOver(List<GameObject> animals)
     {
@@ -472,124 +360,124 @@ void StartDrop()
         return false;
     }
 
-void AdjustSaturation(Mat imgMat, double scale)
-{
-    // BGR から HSV へ変換
-    Mat hsvMat = new Mat();
-    Cv2.CvtColor(imgMat, hsvMat, ColorConversionCodes.BGR2HSV);
+    void AdjustSaturation(Mat imgMat, double scale)
+    {
+        // BGR から HSV へ変換
+        Mat hsvMat = new Mat();
+        Cv2.CvtColor(imgMat, hsvMat, ColorConversionCodes.BGR2HSV);
 
-    // 彩度チャンネルを取得
-    Mat[] hsvChannels = Cv2.Split(hsvMat);
-    hsvChannels[1] *= scale; // 彩度チャンネルのスケーリング
+        // 彩度チャンネルを取得
+        Mat[] hsvChannels = Cv2.Split(hsvMat);
+        hsvChannels[1] *= scale; // 彩度チャンネルのスケーリング
 
-    // HSV チャンネルをマージして画像を再構築
-    Mat adjustedHsvMat = new Mat();
-    Cv2.Merge(hsvChannels, adjustedHsvMat);
+        // HSV チャンネルをマージして画像を再構築
+        Mat adjustedHsvMat = new Mat();
+        Cv2.Merge(hsvChannels, adjustedHsvMat);
 
-    // HSV から BGR へ戻す
-    Cv2.CvtColor(adjustedHsvMat, imgMat, ColorConversionCodes.HSV2BGR);
+        // HSV から BGR へ戻す
+        Cv2.CvtColor(adjustedHsvMat, imgMat, ColorConversionCodes.HSV2BGR);
 
-    hsvMat.Dispose();
-    adjustedHsvMat.Dispose();
-}
-// ノイズを減らすための処理
-void ReduceNoise(Mat binaryMat)
-{
-    // モルフォロジー演算に使うカーネルのサイズ
-    int kernelSize = 3; // 適切なサイズを選択
+        hsvMat.Dispose();
+        adjustedHsvMat.Dispose();
+    }
+    // ノイズを減らすための処理
+    void ReduceNoise(Mat binaryMat)
+    {
+        // モルフォロジー演算に使うカーネルのサイズ
+        int kernelSize = 3; // 適切なサイズを選択
 
-    // カーネルの作成
-    Mat kernel = Cv2.GetStructuringElement(MorphShapes.Rect, new Size(kernelSize, kernelSize));
+        // カーネルの作成
+        Mat kernel = Cv2.GetStructuringElement(MorphShapes.Rect, new Size(kernelSize, kernelSize));
 
-    // 収縮処理
-    Mat erodedMat = new Mat();
-    Cv2.Erode(binaryMat, erodedMat, kernel, iterations: 1);
+        // 収縮処理
+        Mat erodedMat = new Mat();
+        Cv2.Erode(binaryMat, erodedMat, kernel, iterations: 1);
 
-    // 膨張処理
-    Mat dilatedMat = new Mat();
-    Cv2.Dilate(erodedMat, dilatedMat, kernel, iterations: 1);
+        // 膨張処理
+        Mat dilatedMat = new Mat();
+        Cv2.Dilate(erodedMat, dilatedMat, kernel, iterations: 1);
 
-    // 処理結果を使用する
-    // ... (例えば、結果を表示したり、他の処理に渡したり)
-    
-    // リソースの解放
-    kernel.Dispose();
-    erodedMat.Dispose();
+        // 処理結果を使用する
+        // ... (例えば、結果を表示したり、他の処理に渡したり)
 
-
-
-}
+        // リソースの解放
+        kernel.Dispose();
+        erodedMat.Dispose();
 
 
-//public Vector2 GetFacePosition()
-//{
-//    if (cascadeFaces == null) return Vector2.zero;
 
-//    WebCamTexture input = FindObjectOfType<CreateManager>().webCamTexture;
-//    Mat image = OpenCvSharp.Unity.TextureToMat(input);
-//    Mat gray = image.CvtColor(ColorConversionCodes.BGR2GRAY);
-//    Cv2.EqualizeHist(gray, gray);
-//    OpenCvSharp.Rect[] rawFaces = cascadeFaces.DetectMultiScale(gray, 1.1, 6);
+    }
 
-//    if (rawFaces.Length > 0)
-//    {
-//        var face = rawFaces[0];
-//        var cx = face.TopLeft.X + (face.Width / 2f);
-//        var cy = face.TopLeft.Y + (face.Height / 2f);
 
-//        Vector2 detectedPosition = new Vector2(cx / gray.Width, 1 - cy / gray.Height);
-//        // 平滑化
-//        lastFacePosition = Vector2.Lerp(lastFacePosition, detectedPosition, smoothingFactor);
-//        return lastFacePosition;
-//    }
+    //public Vector2 GetFacePosition()
+    //{
+    //    if (cascadeFaces == null) return Vector2.zero;
 
-//    return Vector2.zero;
-//} 
-void InitWebCam()
-{
+    //    WebCamTexture input = FindObjectOfType<CreateManager>().webCamTexture;
+    //    Mat image = OpenCvSharp.Unity.TextureToMat(input);
+    //    Mat gray = image.CvtColor(ColorConversionCodes.BGR2GRAY);
+    //    Cv2.EqualizeHist(gray, gray);
+    //    OpenCvSharp.Rect[] rawFaces = cascadeFaces.DetectMultiScale(gray, 1.1, 6);
+
+    //    if (rawFaces.Length > 0)
+    //    {
+    //        var face = rawFaces[0];
+    //        var cx = face.TopLeft.X + (face.Width / 2f);
+    //        var cy = face.TopLeft.Y + (face.Height / 2f);
+
+    //        Vector2 detectedPosition = new Vector2(cx / gray.Width, 1 - cy / gray.Height);
+    //        // 平滑化
+    //        lastFacePosition = Vector2.Lerp(lastFacePosition, detectedPosition, smoothingFactor);
+    //        return lastFacePosition;
+    //    }
+
+    //    return Vector2.zero;
+    //} 
+    void InitWebCam()
+    {
         if (webCamTexture)
         {
             webCamTexture.Stop();
         }
-    WebCamDevice[] devices = WebCamTexture.devices;
-    bool cameraFound = false;
+        WebCamDevice[] devices = WebCamTexture.devices;
+        bool cameraFound = false;
 
-    foreach (var device in devices)
-    {
-        Debug.Log("Available camera: " + device.name);
-
-        if (device.name == "HD Webcam eMeet C960")
+        foreach (var device in devices)
         {
-            webCamTexture = new WebCamTexture(device.name, 640, 480, 30);
-            cameraFound = true;
-            break;
+            Debug.Log("Available camera: " + device.name);
+
+            if (device.name == "HD Webcam eMeet C960")
+            {
+                webCamTexture = new WebCamTexture(device.name, 640, 480, 30);
+                cameraFound = true;
+                break;
+            }
+        }
+
+        // 指定されたカメラが見つからない場合、内蔵カメラを使用する
+        if (!cameraFound)
+        {
+            if (devices.Length > 0)
+            {
+                // 最初のカメラを選択（通常は内蔵カメラ）
+                webCamTexture = new WebCamTexture(devices[0].name, 640, 480, 30);
+                Debug.Log("外付けカメラが見つからなかったため、内蔵カメラを使用します。");
+            }
+            else
+            {
+                Debug.LogError("カメラが接続されていません。");
+                return;
+            }
+        }
+
+        webCamTexture.Play();
+
+        // RawImage にカメラ映像を設定
+        if (cameraDisplay != null)
+        {
+            cameraDisplay.texture = webCamTexture;
         }
     }
-
-    // 指定されたカメラが見つからない場合、内蔵カメラを使用する
-    if (!cameraFound)
-    {
-        if (devices.Length > 0)
-        {
-            // 最初のカメラを選択（通常は内蔵カメラ）
-            webCamTexture = new WebCamTexture(devices[0].name, 640, 480, 30);
-            Debug.Log("外付けカメラが見つからなかったため、内蔵カメラを使用します。");
-        }
-        else
-        {
-            Debug.LogError("カメラが接続されていません。");
-            return;
-        }
-    }
-
-    webCamTexture.Play();
-
-    // RawImage にカメラ映像を設定
-    if (cameraDisplay != null)
-    {
-        cameraDisplay.texture = webCamTexture;
-    }
-}
 
     // ゲームオブジェクトが非アクティブ化されたときに呼ばれる
     private void OnDisable()

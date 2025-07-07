@@ -196,8 +196,8 @@
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\AssemblyInfo.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Tasks\Vision\HandLandmarker\Proto\HandLandmarkerGraphOptions.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Calculators\Core\PacketThinnerCalculator.cs" />
-    <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Tasks\Components\Containers\Keypoint.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Calculators\Util\LandmarkProjectionCalculator.cs" />
+    <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Tasks\Components\Containers\Keypoint.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Gpu\GlSyncPoint.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Calculators\Util\TimedBoxListToRenderDataCalculator.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Unity\Annotation\PointAnnotation.cs" />
@@ -206,8 +206,8 @@
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Tasks\Vision\ImageSegmenter\Proto\TensorsToSegmentationCalculator.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Tasks\Components\Containers\Rect.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\PInvoke\NativeMethods\Gpu\GpuBufferFormat_Safe.cs" />
-    <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\PInvoke\NativeMethods\Gpu\GlTextureBuffer_Safe.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Core\InternalException.cs" />
+    <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\PInvoke\NativeMethods\Gpu\GlTextureBuffer_Safe.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Tasks\Vision\HandLandmarker\Proto\HandRoiRefinementGraphOptions.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Unity\Annotation\CircleAnnotation.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Tasks\Vision\ObjectDetector\ObjectDetector.cs" />
@@ -224,9 +224,9 @@
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\PInvoke\SafeNativeMethods.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Unity\Annotation\HandLandmarkerResultAnnotationController.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Gpu\Egl.cs" />
+    <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Calculators\Tensor\TensorsToLandmarksCalculator.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Tasks\Vision\GestureRecognizer\Proto\GestureRecognizerGraphOptions.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\PInvoke\MpReturnCode.cs" />
-    <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Calculators\Tensor\TensorsToLandmarksCalculator.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Tasks\Vision\FaceLandmarker\FaceLandmarkerResult.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Extension\ListExtension.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Framework\Packet\PacketMap.cs" />
@@ -296,8 +296,8 @@
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Gpu\GpuResources.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Unity\Experimental\TextureFrame.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\PInvoke\NativeMethods\External\Protobuf_Unsafe.cs" />
-    <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Calculators\Core\PacketClonerCalculator.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Unity\Annotation\HandLandmarkListAnnotation.cs" />
+    <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Calculators\Core\PacketClonerCalculator.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Framework\Formats\Classification.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Tasks\Vision\FaceLandmarker\Proto\FaceLandmarksDetectorGraphOptions.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Calculators\Tensor\ImageToTensorCalculator.cs" />
@@ -403,8 +403,8 @@
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Framework\Formats\ImageFileProperties.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Unity\Annotation\FaceLandmarkListAnnotationController.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Calculators\Util\RectToRenderScaleCalculator.cs" />
-    <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Unity\ResourceManager\StreamingAssetsResourceManager.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Calculators\Tflite\TfliteTensorsToLandmarksCalculator.cs" />
+    <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Unity\ResourceManager\StreamingAssetsResourceManager.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Tasks\Core\BaseOptions.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Framework\Formats\ImageFrame.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Framework\PacketFactory.cs" />
