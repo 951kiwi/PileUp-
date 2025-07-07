@@ -18,20 +18,16 @@ public class CreateManager : MonoBehaviour
     public static string FinalformattedNumber;
 
     // カメラとプレビューオブジェクトの上昇速度
-    [Tooltip("カメラが上昇する速さ(秒)")]
+    [SerializeField,Tooltip("カメラが上昇する速さ(秒)")]
     private float cameraRiseSpeed = 1f;
     // カメラの調整に関する変数
-    public float cameraOffset = 5f; // カメラが積まれた画像の上に位置するオフセット
-    public float previewObjectOffset = 0.5f; // プレビューオブジェクトのオフセット
 
     public List<GameObject> people;
     public float pivotHeight = 15; // 生成位置の基準
     public Camera mainCamera;
-    private Vector3 initialCameraPosition;
-    public GameObject cameracontroller;
 
     Texture2D dstTexture;
-    public Sprite capturedSprite;
+    private Sprite capturedSprite;
     public float maxObjectHeight = 0f; // 積まれた画像の最大高さ
 
     // スコア表示用
@@ -51,16 +47,12 @@ public class CreateManager : MonoBehaviour
     private bool isCountingDown = false;
     private bool DropCountDownStart = false;
     public Text countdownText;
-    public Text countdownTextBackground;     // 背景撮影指示メッセージ
-    public Text countdownTextBackground2;     // 背景撮影指示カウントダウン
     public Camera ScreenShotCamera;
 
     //SE再生用変数
     public AudioSource audioSource;
     public AudioSource camera;
     public AudioSource count;
-
-    public int sabun1 = 40;
 
     private GameManager gameManager;
 
@@ -83,7 +75,6 @@ public class CreateManager : MonoBehaviour
         {
             FinalResult = maxObjectHeight;
             FinalformattedNumber = FinalResult.ToString("F2");
-            StopCamera();
             ScreenShot screenshot = GetComponent<ScreenShot>();
             screenshot.TakeScreenshot(ScreenShotCamera);
             SceneManager.LoadScene("GameOver");
@@ -128,7 +119,7 @@ public class CreateManager : MonoBehaviour
     IEnumerator StartDropCountdown()
     {
         // プレビューオブジェクトの位置を更新
-        previewObject.transform.position = new Vector2(9, maxObjectHeight + 15);
+        previewObject.transform.position = new Vector2(9.3f, maxObjectHeight + 19f);
 
         if (isCountingDown)
             yield break;
@@ -152,11 +143,13 @@ public class CreateManager : MonoBehaviour
             // カメラの高さを設定
             Vector3 cameraPosition = mainCamera.transform.position;
             // 目標位置（Y座標だけ変更）
-            Vector3 targetPos = new Vector3(cameraPosition.x, maxObjectHeight + 7, cameraPosition.z);
+            Vector3 targetPos = new Vector3(cameraPosition.x, maxObjectHeight + 15, cameraPosition.z);
             // 徐々に近づく（0.1fは補間速度。値を調整して滑らかさを制御）
             mainCamera.transform.position = Vector3.Lerp(cameraPosition, targetPos, Time.deltaTime * 3f);
 
-            Vector2 v2 = new Vector2(mainCamera.ScreenToWorldPoint(Input.mousePosition).x, 15 + maxObjectHeight);
+            Vector3 mousePos = Input.mousePosition;
+            Vector2 v2 = mainCamera.ScreenToWorldPoint(mousePos);
+            v2.y = maxObjectHeight + 15;
 
             if (previewObject != null)
             {
@@ -187,16 +180,16 @@ public class CreateManager : MonoBehaviour
             countdownText.text = "次の人型撮影まで: " + waitTime.ToString("F0") + "秒";
             yield return new WaitForSeconds(1f);
 
-            if (waitTime == 5)
+            if (waitTime == 6)
             {
                 // すべての積まれたオブジェクトの中で最も高いオブジェクトのY座標を取得
                 if (people.Count > 0)
                 {
                     maxObjectHeight = people.Max(obj => obj.transform.position.y + obj.GetComponent<SpriteRenderer>().bounds.size.y / 2);
                     // カメラの高さを設定
-                    StartCoroutine(SlideCameraToY(maxObjectHeight + 7, cameraRiseSpeed));
+                    StartCoroutine(SlideCameraToY(maxObjectHeight + 15, cameraRiseSpeed));
 
-                    Vector2 v2 = new Vector2(5, 15 + maxObjectHeight);
+                    Vector2 v2 = new Vector2(5, 7 + maxObjectHeight);
 
                     if (previewObject != null)
                     {
@@ -217,8 +210,9 @@ public class CreateManager : MonoBehaviour
 
                 // ここでスコアを加算
                 score = maxObjectHeight;
-                string formattedNumber = score.ToString("F2");
-                scoreText.text = "Score: " + formattedNumber + "M";
+                string scoreStr = scoreText.text.Replace("m", "");
+                float old_score = float.Parse(scoreStr);
+                StartCoroutine(AnimateScoreCoroutine(old_score, score, 3.0f));
             }
 
             waitTime--;
@@ -252,6 +246,27 @@ public class CreateManager : MonoBehaviour
         mainCamera.transform.position = end; // 最後にピタリ
     }
 
+    IEnumerator AnimateScoreCoroutine(float from, float to, float duration)
+    {
+        float elapsed = 0f;
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            // イージング（加減速）をかけたいならここでtを変形：
+            t = t * t * t * (t * (6f * t - 15f) + 10f);  // smootherstep
+
+            float currentValue = Mathf.Lerp(from, to, t);
+            scoreText.text = currentValue.ToString("F2") + "m";
+            yield return null;
+        }
+
+        // 最後はピッタリ目標値に
+        scoreText.text = to.ToString("F2") + "m";
+    }
+
     void CaptureImage()
     {
         Mat resultMat = gameManager.resultMat;
@@ -264,7 +279,7 @@ public class CreateManager : MonoBehaviour
         capturedSprite = Sprite.Create(this.dstTexture, new UnityEngine.Rect(0, 0, this.dstTexture.width, this.dstTexture.height), Vector2.zero);
 
         CreatePreviewObject(capturedSprite);
-
+        
 
     }
 
@@ -286,7 +301,7 @@ public class CreateManager : MonoBehaviour
         spriteRenderer.sprite = newSprite;
 
         // サイズのスケールを設定（例: 0.5倍のサイズにする）
-        previewObject.transform.localScale = new Vector3(-2.5f, 2.5f, 1f);
+        previewObject.transform.localScale = new Vector3(-2.9f, 2.9f, 1f);
 
         // PolygonColliderを追加し、画像の透明部分を無視する
         PolygonCollider2D polygonCollider = previewObject.AddComponent<PolygonCollider2D>();
@@ -329,14 +344,14 @@ public class CreateManager : MonoBehaviour
 
                 // カメラの高さを設定
                 Vector3 cameraPosition = mainCamera.transform.position;
-                cameraPosition.y = maxObjectHeight + 7; // 適切なオフセットを追加
+                cameraPosition.y = maxObjectHeight + 15; // 適切なオフセットを追加
                 mainCamera.transform.position = cameraPosition;
             }
 
             // プレビューオブジェクトの位置を固定
             if (previewObject != null)
             {
-                previewObject.transform.position = new Vector3(9, maxObjectHeight + 15, 0); // 固定位置に設定
+                previewObject.transform.position = new Vector3(9.3f, maxObjectHeight + 19, 0); // 固定位置に設定
             }
 
             people.Add(previewObject);
@@ -355,151 +370,5 @@ public class CreateManager : MonoBehaviour
             }
         }
         return false;
-    }
-
-    void AdjustSaturation(Mat imgMat, double scale)
-    {
-        // BGR から HSV へ変換
-        Mat hsvMat = new Mat();
-        Cv2.CvtColor(imgMat, hsvMat, ColorConversionCodes.BGR2HSV);
-
-        // 彩度チャンネルを取得
-        Mat[] hsvChannels = Cv2.Split(hsvMat);
-        hsvChannels[1] *= scale; // 彩度チャンネルのスケーリング
-
-        // HSV チャンネルをマージして画像を再構築
-        Mat adjustedHsvMat = new Mat();
-        Cv2.Merge(hsvChannels, adjustedHsvMat);
-
-        // HSV から BGR へ戻す
-        Cv2.CvtColor(adjustedHsvMat, imgMat, ColorConversionCodes.HSV2BGR);
-
-        hsvMat.Dispose();
-        adjustedHsvMat.Dispose();
-    }
-    // ノイズを減らすための処理
-    void ReduceNoise(Mat binaryMat)
-    {
-        // モルフォロジー演算に使うカーネルのサイズ
-        int kernelSize = 3; // 適切なサイズを選択
-
-        // カーネルの作成
-        Mat kernel = Cv2.GetStructuringElement(MorphShapes.Rect, new Size(kernelSize, kernelSize));
-
-        // 収縮処理
-        Mat erodedMat = new Mat();
-        Cv2.Erode(binaryMat, erodedMat, kernel, iterations: 1);
-
-        // 膨張処理
-        Mat dilatedMat = new Mat();
-        Cv2.Dilate(erodedMat, dilatedMat, kernel, iterations: 1);
-
-        // 処理結果を使用する
-        // ... (例えば、結果を表示したり、他の処理に渡したり)
-
-        // リソースの解放
-        kernel.Dispose();
-        erodedMat.Dispose();
-
-
-
-    }
-
-
-    //public Vector2 GetFacePosition()
-    //{
-    //    if (cascadeFaces == null) return Vector2.zero;
-
-    //    WebCamTexture input = FindObjectOfType<CreateManager>().webCamTexture;
-    //    Mat image = OpenCvSharp.Unity.TextureToMat(input);
-    //    Mat gray = image.CvtColor(ColorConversionCodes.BGR2GRAY);
-    //    Cv2.EqualizeHist(gray, gray);
-    //    OpenCvSharp.Rect[] rawFaces = cascadeFaces.DetectMultiScale(gray, 1.1, 6);
-
-    //    if (rawFaces.Length > 0)
-    //    {
-    //        var face = rawFaces[0];
-    //        var cx = face.TopLeft.X + (face.Width / 2f);
-    //        var cy = face.TopLeft.Y + (face.Height / 2f);
-
-    //        Vector2 detectedPosition = new Vector2(cx / gray.Width, 1 - cy / gray.Height);
-    //        // 平滑化
-    //        lastFacePosition = Vector2.Lerp(lastFacePosition, detectedPosition, smoothingFactor);
-    //        return lastFacePosition;
-    //    }
-
-    //    return Vector2.zero;
-    //} 
-    void InitWebCam()
-    {
-        if (webCamTexture)
-        {
-            webCamTexture.Stop();
-        }
-        WebCamDevice[] devices = WebCamTexture.devices;
-        bool cameraFound = false;
-
-        foreach (var device in devices)
-        {
-            Debug.Log("Available camera: " + device.name);
-
-            if (device.name == "HD Webcam eMeet C960")
-            {
-                webCamTexture = new WebCamTexture(device.name, 640, 480, 30);
-                cameraFound = true;
-                break;
-            }
-        }
-
-        // 指定されたカメラが見つからない場合、内蔵カメラを使用する
-        if (!cameraFound)
-        {
-            if (devices.Length > 0)
-            {
-                // 最初のカメラを選択（通常は内蔵カメラ）
-                webCamTexture = new WebCamTexture(devices[0].name, 640, 480, 30);
-                Debug.Log("外付けカメラが見つからなかったため、内蔵カメラを使用します。");
-            }
-            else
-            {
-                Debug.LogError("カメラが接続されていません。");
-                return;
-            }
-        }
-
-        webCamTexture.Play();
-
-        // RawImage にカメラ映像を設定
-        if (cameraDisplay != null)
-        {
-            cameraDisplay.texture = webCamTexture;
-        }
-    }
-
-    // ゲームオブジェクトが非アクティブ化されたときに呼ばれる
-    private void OnDisable()
-    {
-        StopCamera();
-    }
-    // シーン移行時に呼ばれる
-    private void OnDestroy()
-    {
-        StopCamera();
-    }
-
-    // アプリケーションが終了する直前に呼ばれる
-    private void OnApplicationQuit()
-    {
-        StopCamera();
-    }
-
-    // カメラ停止処理
-    private void StopCamera()
-    {
-        if (webCamTexture != null && webCamTexture.isPlaying)
-        {
-            webCamTexture.Stop();
-            Debug.Log("カメラを停止しました。");
-        }
     }
 }
