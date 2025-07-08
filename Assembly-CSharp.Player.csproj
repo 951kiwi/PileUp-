@@ -154,9 +154,9 @@
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\modules\core\Mat\MatOfPoint.cs" />
     <Compile Include="Assets\OpenCV+Unity\Demo\Grayscale\GrayscaleScript.cs" />
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\Util\DynamicInvoker.cs" />
+    <Compile Include="Assets\Scripts\DebugWindowCreater.cs" />
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\modules\ml\ParamGrid.cs" />
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\CvObject.cs" />
-    <Compile Include="Assets\Scripts\DebugWindowCreater.cs" />
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\modules\core\Enum\GemmFlags.cs" />
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\Vector\VectorOfByte.cs" />
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\modules\features2d\GFTTDetector.cs" />
@@ -327,7 +327,6 @@
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\modules\core\Struct\Rect.cs" />
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\modules\bgsegm\BackgroundSubtractorGMG.cs" />
     <Compile Include="Assets\OpenCV+Unity\Demo\LiveSketch_WebCam\LiveSketchScript.cs" />
-    <Compile Include="Assets\Scripts\Ranking.cs" />
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\modules\core\Enum\DistributionType.cs" />
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\Vector\VectorOfVectorPoint2f.cs" />
     <Compile Include="Assets\OpenCV+Unity\Assets\Scripts\OpenCvSharp\Util\EnumerableEx.cs" />

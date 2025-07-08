@@ -12,6 +12,7 @@ using Google.Protobuf.WellKnownTypes;
 
 public class GameManager : MonoBehaviour
 {
+    public static GameManager Instance { get; private set; }
     [SerializeField, Header("デバッグ")]
     private GameObject DebugObject;
     private GameObject RowImageObjects;
@@ -22,6 +23,9 @@ public class GameManager : MonoBehaviour
 
     public int sabun1 = 40;
     public int fallKernelSize = 5;
+    public int NoiseKernelSize = 3;
+
+    public float FinalScore;
 
     // フィールド変数に追加しておく
     private Texture2D backgroundTexture, binaryTexture, initialFrameTexture, diffTexture;
@@ -35,6 +39,15 @@ public class GameManager : MonoBehaviour
 
     void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
         if (webCamTexture)
         {
             webCamTexture.Stop();
@@ -78,7 +91,11 @@ public class GameManager : MonoBehaviour
 
         // スライダー初期値の同期
         RowImageObjects.transform.Find("H2").Find("Other").Find("Slider").GetComponent<Slider>().value = sabun1;
+        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider2").GetComponent<Slider>().value = NoiseKernelSize;
+        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider3").GetComponent<Slider>().value = fallKernelSize;
         RowImageObjects.transform.Find("H2").Find("Other").Find("Slider").Find("valueText").GetComponent<TextMeshProUGUI>().text = sabun1.ToString();
+        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider2").Find("valueText").GetComponent<TextMeshProUGUI>().text = NoiseKernelSize.ToString();
+        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider3").Find("valueText").GetComponent<TextMeshProUGUI>().text = fallKernelSize.ToString();
 
         RowImageObjects.transform.Find("H1").Find("R1").GetComponent<RawImage>().texture = backgroundTexture;
         RowImageObjects.transform.Find("H1").Find("R2").GetComponent<RawImage>().texture = webCamTexture;
@@ -121,8 +138,7 @@ public class GameManager : MonoBehaviour
             // ノイズをモルフォロジーで除去
             binaryMat1 = ReduceNoise(binaryMat);
 
-            //穴埋め・輪郭滑らか化・小さいギザギザ除去
-            binaryMat2 = SmoothMask(binaryMat1);
+            binaryMat2 = binaryMat1;
             //穴埋め
             binaryMat3 =  CloseSmallHoles(binaryMat2);
 
@@ -170,6 +186,16 @@ public class GameManager : MonoBehaviour
     {
         sabun1 = (int)RowImageObjects.transform.Find("H2").Find("Other").Find("Slider").GetComponent<Slider>().value;
         RowImageObjects.transform.Find("H2").Find("Other").Find("Slider").Find("valueText").GetComponent<TextMeshProUGUI>().text = sabun1.ToString();
+    }
+    public void changed_Sabun2(int value)
+    {
+        NoiseKernelSize = (int)RowImageObjects.transform.Find("H2").Find("Other").Find("Slider2").GetComponent<Slider>().value;
+        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider2").Find("valueText").GetComponent<TextMeshProUGUI>().text = NoiseKernelSize.ToString();
+    }
+    public void changed_Sabun3(int value)
+    {
+        fallKernelSize = (int)RowImageObjects.transform.Find("H2").Find("Other").Find("Slider3").GetComponent<Slider>().value;
+        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider3").Find("valueText").GetComponent<TextMeshProUGUI>().text = fallKernelSize.ToString();
     }
 
 
@@ -231,10 +257,9 @@ public class GameManager : MonoBehaviour
     Mat ReduceNoise(Mat binaryMat)
     {
         // モルフォロジー演算に使うカーネルのサイズ
-        int kernelSize = 3; // 適切なサイズを選択
 
         // カーネルの作成
-        Mat kernel = Cv2.GetStructuringElement(MorphShapes.Rect, new Size(kernelSize, kernelSize));
+        Mat kernel = Cv2.GetStructuringElement(MorphShapes.Rect, new Size(NoiseKernelSize, NoiseKernelSize));
 
         // 収縮処理
         Mat erodedMat = new Mat();
@@ -303,17 +328,6 @@ public class GameManager : MonoBehaviour
         webCamTexture.Play();
     }
 
-    // ゲームオブジェクトが非アクティブ化されたときに呼ばれる
-    private void OnDisable()
-    {
-        StopCamera();
-    }
-    // シーン移行時に呼ばれる
-    private void OnDestroy()
-    {
-        StopCamera();
-    }
-
     // アプリケーションが終了する直前に呼ばれる
     private void OnApplicationQuit()
     {
@@ -327,6 +341,24 @@ public class GameManager : MonoBehaviour
         {
             webCamTexture.Stop();
             Debug.Log("カメラを停止しました。");
+        }
+    }
+    void OnEnable()
+    {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (webCamTexture != null && !webCamTexture.isPlaying)
+        {
+            webCamTexture.Play();
+            Debug.Log("シーン遷移後にカメラを再起動しました。");
         }
     }
 }

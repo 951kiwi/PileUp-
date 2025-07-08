@@ -7,6 +7,8 @@ using System.IO;
 using System.Linq;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using Unity.VisualScripting;
+using Google.Protobuf.WellKnownTypes;
 
 public class CreateManager : MonoBehaviour
 {
@@ -48,6 +50,7 @@ public class CreateManager : MonoBehaviour
     private bool DropCountDownStart = false;
     public Text countdownText;
     public Camera ScreenShotCamera;
+    public GameObject nowRanking;
 
     //SE再生用変数
     public AudioSource audioSource;
@@ -62,6 +65,7 @@ public class CreateManager : MonoBehaviour
     void Start()
     {
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        Debug.Log(gameManager);
         //コルーチン動作
         //cameraDisplay.enabled = false;
         StartCoroutine(StartCountdown());
@@ -70,12 +74,12 @@ public class CreateManager : MonoBehaviour
 
     void Update()
     {
+        
         //ゲームオーバー判定
         if (CheckGameOver(people) && people.Count > 0)
         {
-            FinalResult = maxObjectHeight;
-            FinalformattedNumber = FinalResult.ToString("F2");
-            ScreenShot screenshot = GetComponent<ScreenShot>();
+            gameManager.FinalScore = maxObjectHeight;
+            ScreenShot screenshot = gameManager.gameObject.GetComponent<ScreenShot>();
             screenshot.TakeScreenshot(ScreenShotCamera);
             SceneManager.LoadScene("GameOver");
         }
@@ -119,7 +123,7 @@ public class CreateManager : MonoBehaviour
     IEnumerator StartDropCountdown()
     {
         // プレビューオブジェクトの位置を更新
-        previewObject.transform.position = new Vector2(9.3f, maxObjectHeight + 19f);
+        previewObject.transform.position = new Vector2(9.3f, maxObjectHeight + 15f);
 
         if (isCountingDown)
             yield break;
@@ -140,12 +144,6 @@ public class CreateManager : MonoBehaviour
         if (people.Count > 0)
         {
             maxObjectHeight = people.Max(obj => obj.transform.position.y + obj.GetComponent<SpriteRenderer>().bounds.size.y / 2);
-            // カメラの高さを設定
-            Vector3 cameraPosition = mainCamera.transform.position;
-            // 目標位置（Y座標だけ変更）
-            Vector3 targetPos = new Vector3(cameraPosition.x, maxObjectHeight + 15, cameraPosition.z);
-            // 徐々に近づく（0.1fは補間速度。値を調整して滑らかさを制御）
-            mainCamera.transform.position = Vector3.Lerp(cameraPosition, targetPos, Time.deltaTime * 3f);
 
             Vector3 mousePos = Input.mousePosition;
             Vector2 v2 = mainCamera.ScreenToWorldPoint(mousePos);
@@ -180,16 +178,16 @@ public class CreateManager : MonoBehaviour
             countdownText.text = "次の人型撮影まで: " + waitTime.ToString("F0") + "秒";
             yield return new WaitForSeconds(1f);
 
-            if (waitTime == 6)
+            if (waitTime == 5)
             {
                 // すべての積まれたオブジェクトの中で最も高いオブジェクトのY座標を取得
                 if (people.Count > 0)
                 {
                     maxObjectHeight = people.Max(obj => obj.transform.position.y + obj.GetComponent<SpriteRenderer>().bounds.size.y / 2);
                     // カメラの高さを設定
-                    StartCoroutine(SlideCameraToY(maxObjectHeight + 15, cameraRiseSpeed));
+                    StartCoroutine(SlideCameraToY(maxObjectHeight + 7, cameraRiseSpeed));
 
-                    Vector2 v2 = new Vector2(5, 7 + maxObjectHeight);
+                    Vector2 v2 = new Vector2(5, 15 + maxObjectHeight);
 
                     if (previewObject != null)
                     {
@@ -212,6 +210,7 @@ public class CreateManager : MonoBehaviour
                 score = maxObjectHeight;
                 string scoreStr = scoreText.text.Replace("m", "");
                 float old_score = float.Parse(scoreStr);
+                rankingController(score);
                 StartCoroutine(AnimateScoreCoroutine(old_score, score, 3.0f));
             }
 
@@ -225,6 +224,70 @@ public class CreateManager : MonoBehaviour
             StartCoroutine(StartCountdown());
         }
     }
+    int oldRanking = 1000;
+    private void rankingController(float score)
+    {
+        RankingManager rankingManager = gameManager.gameObject.GetComponent<RankingManager>();
+        int nowRanking = rankingManager.GetNowRanking(score);
+        setRanking(oldRanking,nowRanking);
+        oldRanking = nowRanking;
+
+}
+    void setRanking(int from, int to)
+    {
+        
+        StartCoroutine(AnimateRankingCoroutine(from, to,1.0f));
+
+        IEnumerator AnimateRankingCoroutine(int from, int to, float duration)
+        {
+            float elapsed = 0f;
+
+            while (elapsed < duration)
+            {
+                foreach (Transform child in nowRanking.transform)//子要素をすべて削除
+                {
+                    GameObject.Destroy(child.gameObject);
+                }
+                elapsed += Time.deltaTime;
+                float t = elapsed / duration;
+
+                // イージング（smootherstep）
+                t = t * t * t * (t * (6f * t - 15f) + 10f);
+
+                int currentValue = Mathf.RoundToInt(Mathf.Lerp(from, to, t));
+                foreach (char c in currentValue.ToString())
+                {
+                    int digit = c - '0'; // 文字 → 数値
+                    generateNumber(digit);
+                }
+                yield return null;
+            }
+
+            // 最後はピッタリ目標値に
+            scoreText.text = to.ToString() + "m";
+        }
+
+        void generateNumber(int num)
+        {
+            float fixedHeight = 150f;
+            string path = $"Number/{num}"; // 例: Resources/
+            Sprite sprite = Resources.Load<Sprite>(path);
+            GameObject imageObj = new GameObject("num", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+            // Canvas の子として配置
+            imageObj.transform.SetParent(nowRanking.transform, false);
+            // Image コンポーネントにスプライトを設定
+            Image imageComp = imageObj.GetComponent<Image>();
+            imageComp.sprite = sprite;
+            // アスペクト比計算（width ÷ height）
+            float aspect = sprite.rect.width / sprite.rect.height;
+
+            // 高さは固定、横幅はアスペクト比に基づいて計算
+            float width = fixedHeight * aspect;
+            RectTransform rt = imageObj.GetComponent<RectTransform>();
+            rt.sizeDelta = new Vector2(width, fixedHeight);
+        }
+    }
+    
     IEnumerator SlideCameraToY(float targetY, float duration)
     {
         float elapsed = 0f;

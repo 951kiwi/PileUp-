@@ -19,6 +19,7 @@ public class SleepShow : MonoBehaviour
 
     // 現在表示している画像のインデックス
     private int currentImageIndex = 0;
+    Texture2D texture;
 
     // フェード時間
     public float fadeDuration = 1f;
@@ -61,7 +62,7 @@ public class SleepShow : MonoBehaviour
             // ファイル名（拡張子含む）を取得
             string fileName = Path.GetFileName(imagePath);
             fileName = fileName.Replace(".png", "");
-            Texture2D texture = new Texture2D(2, 2);
+            texture = new Texture2D(2, 2);
             texture.LoadImage(imageData);  // PNGデータをロードしてテクスチャに変換
             Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
 
@@ -88,6 +89,8 @@ public class SleepShow : MonoBehaviour
 
             // 次の画像インデックスに更新（循環）
             currentImageIndex = (currentImageIndex + 1) % imagePaths.Length;
+            //画像のtextureを削除
+            UnityEngine.Object.Destroy(texture);
         }
     }
 
@@ -109,5 +112,13 @@ public class SleepShow : MonoBehaviour
 
         // 最終的なアルファ値を確実に設定
         canvasGroup.alpha = endAlpha;
+    }
+    private void OnDestroy()
+    {
+        if (texture != null)
+        {
+            UnityEngine.Object.Destroy(texture);
+            texture = null;
+        }
     }
 }

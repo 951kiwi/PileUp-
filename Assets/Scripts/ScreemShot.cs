@@ -6,18 +6,11 @@ public class ScreenShot : MonoBehaviour
     public static ScreenShot Instance { get; private set; }
     public Camera cameraToCapture;  // キャプチャするカメラ
     public string screenshotName;  // 保存するファイル名
+    private GameManager gameManager;
 
     private void Awake()
     {
-        if (Instance == null)
-        {
-            Instance = this;
-            DontDestroyOnLoad(gameObject);
-        }
-        else
-        {
-            Destroy(gameObject);
-        }
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
     public void TakeScreenshot(Camera cameraToCapture)
@@ -49,7 +42,7 @@ public class ScreenShot : MonoBehaviour
         RenderTexture.active = null;
         Destroy(renderTexture);
         //スクリーンショットの名前を指定
-        int nextID = RankingManager.Instance.nextGameDataID();  // 正しいメソッドの呼び出し
+        int nextID = gameManager.gameObject.GetComponent<RankingManager>().nextGameDataID();  // 正しいメソッドの呼び出し
         screenshotName = $"{nextID}.png";
 
         // スクリーンショットをPNGとして保存
