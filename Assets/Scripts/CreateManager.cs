@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using Unity.VisualScripting;
 using Google.Protobuf.WellKnownTypes;
+using static UnityEngine.GraphicsBuffer;
 
 public class CreateManager : MonoBehaviour
 {
@@ -31,6 +32,7 @@ public class CreateManager : MonoBehaviour
     Texture2D dstTexture;
     private Sprite capturedSprite;
     public float maxObjectHeight = 0f; // 積まれた画像の最大高さ
+    public float nowObjectHeight = 0f; // 積まれた画像の最大高さ
 
     // スコア表示用
     public Text scoreText;
@@ -51,6 +53,7 @@ public class CreateManager : MonoBehaviour
     public Text countdownText;
     public Camera ScreenShotCamera;
     public GameObject nowRanking;
+    public GameObject heightBarObject;
 
     //SE再生用変数
     public AudioSource audioSource;
@@ -78,9 +81,10 @@ public class CreateManager : MonoBehaviour
         //ゲームオーバー判定
         if (CheckGameOver(people) && people.Count > 0)
         {
-            gameManager.FinalScore = maxObjectHeight;
+            gameManager.maxScore = maxObjectHeight;
             ScreenShot screenshot = gameManager.gameObject.GetComponent<ScreenShot>();
-            screenshot.TakeScreenshot(ScreenShotCamera);
+            screenshot.setScreenshotSaved();
+            gameManager.gameObject.GetComponent<RankingManager>().SaveDataAppend(gameManager.maxScore);
             SceneManager.LoadScene("GameOver");
         }
 
@@ -96,14 +100,14 @@ public class CreateManager : MonoBehaviour
 
         while (countdownTime > 0)
         {
-            Debug.Log("撮影前カウントダウン中: " + countdownTime);
+            //Debug.Log("撮影前カウントダウン中: " + countdownTime);
             countdownText.text = "人型撮影まで: " + countdownTime.ToString("F0");
             yield return new WaitForSeconds(1f);
             countdownTime--;
         }
 
         countdownText.text = "撮影中...";
-        Debug.Log("撮影中...");
+        //Debug.Log("撮影中...");
         CaptureImage(); // 画像を撮影
         isCountingDown = false;
 
@@ -123,7 +127,7 @@ public class CreateManager : MonoBehaviour
     IEnumerator StartDropCountdown()
     {
         // プレビューオブジェクトの位置を更新
-        previewObject.transform.position = new Vector2(9.3f, maxObjectHeight + 15f);
+        previewObject.transform.position = new Vector2(9.3f, nowObjectHeight + 15f);
 
         if (isCountingDown)
             yield break;
@@ -134,7 +138,7 @@ public class CreateManager : MonoBehaviour
 
         while (countdownTime > 0)
         {
-            Debug.Log("落下前カウントダウン: " + countdownTime);
+            //Debug.Log("落下前カウントダウン: " + countdownTime);
             countdownText.text = "落下まで: " + countdownTime.ToString("F0");
             yield return new WaitForSeconds(1f);
             countdownTime--;
@@ -143,11 +147,9 @@ public class CreateManager : MonoBehaviour
         // すべての積まれたオブジェクトの中で最も高いオブジェクトのY座標を取得
         if (people.Count > 0)
         {
-            maxObjectHeight = people.Max(obj => obj.transform.position.y + obj.GetComponent<SpriteRenderer>().bounds.size.y / 2);
-
+            MaxHeightController();
             Vector3 mousePos = Input.mousePosition;
             Vector2 v2 = mainCamera.ScreenToWorldPoint(mousePos);
-            v2.y = maxObjectHeight + 15;
 
             if (previewObject != null)
             {
@@ -156,7 +158,7 @@ public class CreateManager : MonoBehaviour
         }
 
         countdownText.text = "落下中...";
-        Debug.Log("落下中...");
+        //Debug.Log("落下中...");
         StartDrop(); // 落下を開始
         audioSource.Play();//落下のSE
 
@@ -183,11 +185,11 @@ public class CreateManager : MonoBehaviour
                 // すべての積まれたオブジェクトの中で最も高いオブジェクトのY座標を取得
                 if (people.Count > 0)
                 {
-                    maxObjectHeight = people.Max(obj => obj.transform.position.y + obj.GetComponent<SpriteRenderer>().bounds.size.y / 2);
+                    MaxHeightController();
                     // カメラの高さを設定
-                    StartCoroutine(SlideCameraToY(maxObjectHeight + 7, cameraRiseSpeed));
+                    StartCoroutine(SlideCameraToY(nowObjectHeight + 7, cameraRiseSpeed));
 
-                    Vector2 v2 = new Vector2(5, 15 + maxObjectHeight);
+                    Vector2 v2 = new Vector2(5, nowObjectHeight + 15);
 
                     if (previewObject != null)
                     {
@@ -201,7 +203,7 @@ public class CreateManager : MonoBehaviour
                     float currentXPosition = rectTransform.anchoredPosition.x;
 
                     // 新しい位置を設定 (例: 新しい x 座標を指定し、y 座標はそのままにする)
-                    Vector2 newPosition = new Vector2(currentXPosition, maxObjectHeight + 400);
+                    Vector2 newPosition = new Vector2(currentXPosition, nowObjectHeight + 400);
                     rectTransform.anchoredPosition = newPosition;
 
                 }
@@ -209,8 +211,10 @@ public class CreateManager : MonoBehaviour
                 // ここでスコアを加算
                 score = maxObjectHeight;
                 string scoreStr = scoreText.text.Replace("m", "");
+                StartCoroutine(SlideHeightBarToY(nowObjectHeight,1f));
                 float old_score = float.Parse(scoreStr);
                 rankingController(score);
+
                 StartCoroutine(AnimateScoreCoroutine(old_score, score, 3.0f));
             }
 
@@ -224,70 +228,97 @@ public class CreateManager : MonoBehaviour
             StartCoroutine(StartCountdown());
         }
     }
+    public void HeightBarShow(bool flag)
+    {
+        if (flag)
+        {
+            heightBarObject.SetActive(true);
+        }
+        else
+        {
+            heightBarObject.SetActive(false);
+        }
+    }
+
+    void MaxHeightController()
+    {
+        nowObjectHeight = people.Max(obj =>
+        {
+            var collider = obj.GetComponent<Collider2D>(); // or Collider for 3D
+            return collider.bounds.max.y;
+        });
+
+        if(maxObjectHeight < nowObjectHeight)
+        {
+            maxObjectHeight = nowObjectHeight;
+            gameManager.gameObject.GetComponent<ScreenShot>().setScreenShotTexture();
+        }
+        Debug.Log(nowObjectHeight);
+    }
     int oldRanking = 1000;
     private void rankingController(float score)
     {
         RankingManager rankingManager = gameManager.gameObject.GetComponent<RankingManager>();
-        int nowRanking = rankingManager.GetNowRanking(score);
-        setRanking(oldRanking,nowRanking);
-        oldRanking = nowRanking;
-
-}
-    void setRanking(int from, int to)
-    {
-        
-        StartCoroutine(AnimateRankingCoroutine(from, to,1.0f));
-
-        IEnumerator AnimateRankingCoroutine(int from, int to, float duration)
+        int nowRankingnNum = rankingManager.GetNowRanking(score);
+        setRanking(oldRanking, nowRankingnNum);
+        oldRanking = nowRankingnNum;
+        void setRanking(int from, int to)
         {
-            float elapsed = 0f;
 
-            while (elapsed < duration)
+            StartCoroutine(AnimateRankingCoroutine(from, to, 1.0f));
+
+            IEnumerator AnimateRankingCoroutine(int from, int to, float duration)
             {
-                foreach (Transform child in nowRanking.transform)//子要素をすべて削除
-                {
-                    GameObject.Destroy(child.gameObject);
-                }
-                elapsed += Time.deltaTime;
-                float t = elapsed / duration;
+                float elapsed = 0f;
 
-                // イージング（smootherstep）
-                t = t * t * t * (t * (6f * t - 15f) + 10f);
-
-                int currentValue = Mathf.RoundToInt(Mathf.Lerp(from, to, t));
-                foreach (char c in currentValue.ToString())
+                while (elapsed < duration)
                 {
-                    int digit = c - '0'; // 文字 → 数値
-                    generateNumber(digit);
+                    foreach (Transform child in nowRanking.transform)//子要素をすべて削除
+                    {
+                        GameObject.Destroy(child.gameObject);
+                    }
+                    elapsed += Time.deltaTime;
+                    float t = elapsed / duration;
+
+                    // イージング（smootherstep）
+                    t = t * t * t * (t * (6f * t - 15f) + 10f);
+
+                    int currentValue = Mathf.RoundToInt(Mathf.Lerp(from, to, t));
+                    foreach (char c in currentValue.ToString())
+                    {
+                        int digit = c - '0'; // 文字 → 数値
+                        generateNumber(digit);
+                    }
+                    yield return null;
                 }
-                yield return null;
+
+                // 最後はピッタリ目標値に
+                scoreText.text = to.ToString() + "m";
             }
 
-            // 最後はピッタリ目標値に
-            scoreText.text = to.ToString() + "m";
+            void generateNumber(int num)
+            {
+                float fixedHeight = 150f;
+                string path = $"Number/{num}"; // 例: Resources/
+                Sprite sprite = Resources.Load<Sprite>(path);
+                GameObject imageObj = new GameObject("num", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
+                // Canvas の子として配置
+                imageObj.transform.SetParent(nowRanking.transform, false);
+                // Image コンポーネントにスプライトを設定
+                Image imageComp = imageObj.GetComponent<Image>();
+                imageComp.sprite = sprite;
+                // アスペクト比計算（width ÷ height）
+                float aspect = sprite.rect.width / sprite.rect.height;
+
+                // 高さは固定、横幅はアスペクト比に基づいて計算
+                float width = fixedHeight * aspect;
+                RectTransform rt = imageObj.GetComponent<RectTransform>();
+                rt.sizeDelta = new Vector2(width, fixedHeight);
+            }
         }
 
-        void generateNumber(int num)
-        {
-            float fixedHeight = 150f;
-            string path = $"Number/{num}"; // 例: Resources/
-            Sprite sprite = Resources.Load<Sprite>(path);
-            GameObject imageObj = new GameObject("num", typeof(RectTransform), typeof(CanvasRenderer), typeof(Image));
-            // Canvas の子として配置
-            imageObj.transform.SetParent(nowRanking.transform, false);
-            // Image コンポーネントにスプライトを設定
-            Image imageComp = imageObj.GetComponent<Image>();
-            imageComp.sprite = sprite;
-            // アスペクト比計算（width ÷ height）
-            float aspect = sprite.rect.width / sprite.rect.height;
-
-            // 高さは固定、横幅はアスペクト比に基づいて計算
-            float width = fixedHeight * aspect;
-            RectTransform rt = imageObj.GetComponent<RectTransform>();
-            rt.sizeDelta = new Vector2(width, fixedHeight);
-        }
     }
-    
+
     IEnumerator SlideCameraToY(float targetY, float duration)
     {
         float elapsed = 0f;
@@ -308,6 +339,29 @@ public class CreateManager : MonoBehaviour
 
         mainCamera.transform.position = end; // 最後にピタリ
     }
+
+    IEnumerator SlideHeightBarToY(float targetTopY, float duration)
+    {
+        float elapsed = 0f;
+        Vector3 start = heightBarObject.transform.position;
+        Vector3 end = new Vector3(start.x, targetTopY, start.z);
+        Debug.Log("カメラ変動");
+
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+
+            // イージング：イーズインアウト（加減速）
+            t = t * t * (3f - 2f * t);  // SmoothStep
+
+            heightBarObject.transform.position = Vector3.Lerp(start, end, t);
+            yield return null;
+        }
+
+        heightBarObject.transform.position = end; // 最後にピタリ
+    }
+
 
     IEnumerator AnimateScoreCoroutine(float from, float to, float duration)
     {
@@ -403,18 +457,14 @@ public class CreateManager : MonoBehaviour
             // 積まれた画像の中で最も高いオブジェクトのY座標を取得
             if (people.Count > 0)
             {
-                maxObjectHeight = people.Max(obj => obj.transform.position.y + obj.GetComponent<SpriteRenderer>().bounds.size.y / 2);
+                MaxHeightController();
 
-                // カメラの高さを設定
-                Vector3 cameraPosition = mainCamera.transform.position;
-                cameraPosition.y = maxObjectHeight + 15; // 適切なオフセットを追加
-                mainCamera.transform.position = cameraPosition;
             }
 
             // プレビューオブジェクトの位置を固定
             if (previewObject != null)
             {
-                previewObject.transform.position = new Vector3(9.3f, maxObjectHeight + 19, 0); // 固定位置に設定
+                previewObject.transform.position = new Vector3(9.3f, maxObjectHeight + 15, 0); // 固定位置に設定
             }
 
             people.Add(previewObject);

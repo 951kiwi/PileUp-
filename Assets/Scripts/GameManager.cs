@@ -25,7 +25,8 @@ public class GameManager : MonoBehaviour
     public int fallKernelSize = 5;
     public int NoiseKernelSize = 3;
 
-    public float FinalScore;
+    public float maxScore;
+    public Texture2D maxScoreScreenshot;
 
     // フィールド変数に追加しておく
     private Texture2D backgroundTexture, binaryTexture, initialFrameTexture, diffTexture;

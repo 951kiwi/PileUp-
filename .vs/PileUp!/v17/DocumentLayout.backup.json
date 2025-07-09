@@ -3,19 +3,31 @@
   "WorkspaceRootPath": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\assets\\scripts\\createmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|c:\\users\\aimus\\desktop\\github\\pileup!\\pileup!\\assets\\scripts\\createmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\createmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\assets\\scripts\\rankingmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\rankingmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\assets\\scripts\\screemshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\screemshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\assets\\scripts\\sleepshow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\sleepshow.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\assets\\scripts\\gamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\gamemanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|c:\\users\\aimus\\desktop\\github\\pileup!\\pileup!\\assets\\scripts\\dontdestroyobject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\assets\\scripts\\rankingmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\rankingmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\assets\\scripts\\createmanager1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\createmanager1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\assets\\scripts\\dontdestroyobject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\dontdestroyobject.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -25,10 +37,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\assets\\scripts\\fixedverticalaspect.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\fixedverticalaspect.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\assets\\scripts\\createmanager1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\createmanager1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\assets\\scripts\\insleep.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -41,10 +49,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\assets\\opencv\u002Bunity\\demo\\ocr.alphabet\\alphabetocrscene.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|solutionrelative:assets\\opencv\u002Bunity\\demo\\ocr.alphabet\\alphabetocrscene.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\assets\\scripts\\screemshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\screemshot.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\assets\\scripts\\titlescreenmanager.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -62,7 +66,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 4,
+          "SelectedChildIndex": 5,
           "Children": [
             {
               "$type": "Bookmark",
@@ -73,21 +77,49 @@
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{e5c86464-96be-4d7c-9a8b-abcb3bbf5f92}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
+              "Title": "SleepShow.cs",
+              "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\SleepShow.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\SleepShow.cs",
+              "ToolTip": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\SleepShow.cs",
+              "RelativeToolTip": "Assets\\Scripts\\SleepShow.cs",
+              "ViewState": "AgIAAFQAAAAAAAAAAAAMwHgAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-08T17:06:46.236Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
               "Title": "RankingManager.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\RankingManager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\RankingManager.cs",
               "ToolTip": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\RankingManager.cs",
               "RelativeToolTip": "Assets\\Scripts\\RankingManager.cs",
-              "ViewState": "AgIAAGUAAAAAAAAAAAAowHEAAAAPAAAAAAAAAA==",
+              "ViewState": "AgIAAB4AAAAAAAAAAAAgwCsAAABRAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-07T15:43:07.157Z",
+              "WhenOpened": "2025-07-07T15:43:07.157Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "CreateManager.cs",
+              "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\CreateManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\CreateManager.cs",
+              "ToolTip": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\CreateManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\CreateManager.cs",
+              "ViewState": "AgIAAAkAAAAAAAAAAAApwBMAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-02T14:33:44.602Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 7,
               "Title": "DebugWindowCreater.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\DebugWindowCreater.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\DebugWindowCreater.cs",
@@ -99,20 +131,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "CreateManager.cs",
-              "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\CreateManager.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\CreateManager.cs",
-              "ToolTip": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\CreateManager.cs",
-              "RelativeToolTip": "Assets\\Scripts\\CreateManager.cs",
-              "ViewState": "AgIAAM0AAAAAAAAAAAAAAOoAAAAaAAAAAAAAAA==",
+              "DocumentIndex": 3,
+              "Title": "GameManager.cs",
+              "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\GameManager.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\GameManager.cs",
+              "ToolTip": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\GameManager.cs",
+              "RelativeToolTip": "Assets\\Scripts\\GameManager.cs",
+              "ViewState": "AgIAAHsAAAAAAAAAAAApwIsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-02T14:33:44.602Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-02T14:21:13.577Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 5,
               "Title": "CreateManager1.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\CreateManager1.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\CreateManager1.cs",
@@ -124,19 +155,19 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 1,
               "Title": "ScreemShot.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\ScreemShot.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\ScreemShot.cs",
               "ToolTip": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\ScreemShot.cs",
               "RelativeToolTip": "Assets\\Scripts\\ScreemShot.cs",
-              "ViewState": "AgIAAAoAAAAAAAAAAAAIwDMAAAAIAAAAAAAAAA==",
+              "ViewState": "AgIAAAUAAAAAAAAAAADwvwwAAABRAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-07-02T16:13:02.986Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "AnimalGenerator.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\AnimalGenerator.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\AnimalGenerator.cs",
@@ -148,24 +179,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "GameManager.cs",
-              "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\GameManager.cs",
-              "RelativeDocumentMoniker": "Assets\\Scripts\\GameManager.cs",
-              "ToolTip": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\GameManager.cs",
-              "RelativeToolTip": "Assets\\Scripts\\GameManager.cs",
-              "ViewState": "AgIAADIBAAAAAAAAAAAAAFsBAAAFAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-02T14:21:13.577Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{e5c86464-96be-4d7c-9a8b-abcb3bbf5f92}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
               "Title": "DontDestroyObject.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\DontDestroyObject.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\DontDestroyObject.cs",
@@ -173,12 +187,11 @@
               "RelativeToolTip": "Assets\\Scripts\\DontDestroyObject.cs",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-05T03:25:11.703Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-05T03:25:11.703Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 8,
               "Title": "FixedVerticalAspect.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\FixedVerticalAspect.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\FixedVerticalAspect.cs",
@@ -190,7 +203,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 9,
               "Title": "inSleep.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\inSleep.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\inSleep.cs",
@@ -202,7 +215,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 11,
               "Title": "AlphabetOCRScene.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\OpenCV\u002BUnity\\Demo\\OCR.Alphabet\\AlphabetOCRScene.cs",
               "RelativeDocumentMoniker": "Assets\\OpenCV\u002BUnity\\Demo\\OCR.Alphabet\\AlphabetOCRScene.cs",
@@ -214,7 +227,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 10,
               "Title": "ContoursByShapeScript.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\OpenCV\u002BUnity\\Demo\\Identifiy_Contours_by_Shape\\ContoursByShapeScript.cs",
               "RelativeDocumentMoniker": "Assets\\OpenCV\u002BUnity\\Demo\\Identifiy_Contours_by_Shape\\ContoursByShapeScript.cs",
@@ -226,7 +239,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "TitleScreenManager.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\TitleScreenManager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\TitleScreenManager.cs",
