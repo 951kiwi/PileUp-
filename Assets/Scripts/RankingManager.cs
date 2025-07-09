@@ -56,13 +56,30 @@ public class RankingManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        // データのロードを試みる
+        GameDataList loadedData = LoadData();
+
+        if (loadedData != null)//データが存在した場合
+        {
+            foreach (var data in loadedData.playerDataList)
+            {
+                Debug.Log("ID: " + data.id + " | " + data.date + " さんのスコア: " + data.score);
+            }
+        }
+        else
+        {
+            Debug.LogError("データが存在しないためフォルダを新規作成します。");
+        }
+
     }
     void TitleIsRankingShow()
     {
         // データのロードを試みる
         GameDataList loadedData = LoadData();
-        loadedData.SortByScore();
+        if (loadedData != null) {
+            loadedData.SortByScore();
+        }
+        
         for (int i = 0; i < 3; i++)
         {
             RankingShowText[i].text = "　　：" + loadedData.playerDataList[i].score + "M";
@@ -80,11 +97,6 @@ public class RankingManager : MonoBehaviour
         else
         {
             Debug.LogError("データが存在しないためフォルダを新規作成します。");
-            SaveDataAppend(0);
-            SaveDataAppend(0);
-            SaveDataAppend(0);
-            SaveDataAppend(0);
-            SaveDataAppend(0);
         }
     }
     void OnEnable()
@@ -101,7 +113,7 @@ public class RankingManager : MonoBehaviour
 
     void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if(scene.name == "GameTitle")
+        if (scene.name == "GameTitle")
         {
             // シーン遷移後にUIを再取得（ヒエラルキー上のオブジェクト名と一致している必要あり）
             RankingShowText = new Text[5];
@@ -160,7 +172,7 @@ public class RankingManager : MonoBehaviour
         if (dataList == null || dataList.playerDataList.Count == 0)
         {
             Debug.LogWarning("ランキングデータが存在しません。");
-            return -1; // 無効値
+            return 0; // 無効値
         }
 
         // スコアが高い順に並べる
@@ -211,9 +223,14 @@ public class RankingManager : MonoBehaviour
     {
         // 現在のデータを読み込み
         GameDataList dataList = LoadData();
-
-        // 新しいIDを取得する
-        int newId = dataList.playerDataList.Count > 0 ? dataList.playerDataList.Max(data => data.id) + 1 : 1;
+        int newId = 0;
+        try
+        {
+            // 新しいIDを取得する
+            newId = dataList.playerDataList.Count > 0 ? dataList.playerDataList.Max(data => data.id) + 1 : 1;
+        }
+        catch (Exception e) { 
+        }
 
         return newId;
     }
@@ -228,13 +245,17 @@ public class RankingManager : MonoBehaviour
         GameData gameData = new GameData();
         // 現在のデータを読み込み
         GameDataList dataList = LoadData();
+        if (dataList == null)
+        {
+            dataList = new GameDataList(); // ★ ここで初期化！
+        }
         // 新しいIDを取得する
         int newId = nextGameDataID();
         gameData.id = newId;
         gameData.date = System.DateTime.Now.ToString();
         gameData.score = score;
         dataList.playerDataList.Add(gameData);
-        Debug.Log("プレイヤーデータを作成しました: " + gameData);
+        Debug.Log("プレイヤーデータを作成しました: ID:{gameData.id} date:{gameData.date} score:{gameData.score}");
 
         SaveData(dataList);
     }
@@ -250,9 +271,9 @@ public class RankingManager : MonoBehaviour
         // ファイルに書き込み
         File.WriteAllText(filePath, jsonData);
 
-        Debug.Log("複数プレイヤーのデータを保存しました: " + jsonData);
+        Debug.Log("プレイヤーのデータを保存しました: ");
     }
 
-    
+
 
 }

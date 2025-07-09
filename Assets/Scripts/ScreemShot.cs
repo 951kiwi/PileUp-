@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.IO;
+using UnityEngine.SceneManagement;
 
 public class ScreenShot : MonoBehaviour
 {
@@ -100,5 +101,24 @@ public class ScreenShot : MonoBehaviour
         string filePath = Path.Combine(Application.persistentDataPath, screenshotName);
         File.WriteAllBytes(filePath, bytes);
         Debug.Log("スクリーンショットが保存されました: " + filePath);
+    }
+    void OnEnable()
+    {
+        // シーン読み込み時のイベントに登録
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    void OnDisable()
+    {
+        // イベント解除（安全のため）
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+    }
+
+    void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        if (scene.name == "Main")
+        {
+            cameraToCapture = GameObject.Find("ScreenShotCamera").GetComponent<Camera>();
+        }
     }
 }

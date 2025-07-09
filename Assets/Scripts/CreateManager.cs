@@ -260,6 +260,7 @@ public class CreateManager : MonoBehaviour
     {
         RankingManager rankingManager = gameManager.gameObject.GetComponent<RankingManager>();
         int nowRankingnNum = rankingManager.GetNowRanking(score);
+        Debug.Log(nowRankingnNum); 
         setRanking(oldRanking, nowRankingnNum);
         oldRanking = nowRankingnNum;
         void setRanking(int from, int to)
