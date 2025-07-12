@@ -9,6 +9,7 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
 using Google.Protobuf.WellKnownTypes;
+using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour
 {
@@ -16,6 +17,7 @@ public class GameManager : MonoBehaviour
     [SerializeField, Header("デバッグ")]
     private GameObject DebugObject;
     private GameObject RowImageObjects;
+    private int cameraIndex;
 
     public WebCamTexture webCamTexture; // WebCamTextureを使ってカメラ映像を取得
 
@@ -58,7 +60,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
-        InitWebCam();
+        try { InitWebCam(); } catch (Exception e) { Debug.LogError("InitWebCamで例外が発生: " + e.Message); }
         backgroundTexture = new Texture2D(640, 480, TextureFormat.RGBA32, false);
         resultTexture = new Texture2D(640, 480, TextureFormat.RGBA32, false);
         binaryTexture = new Texture2D(640, 480, TextureFormat.RGBA32, false);
@@ -85,8 +87,7 @@ public class GameManager : MonoBehaviour
         binaryMat6 = new Mat();
         noiseMat = new Mat();
         resultMat = new Mat();
-
-        CaptureBackground();
+        try { CaptureBackground(); } catch (Exception e) { Debug.LogError("CaptureBackgroundで例外が発生: " + e.Message); }
 
         RowImageObjects = DebugObject.transform.Find("DebugCanvas").Find("RowImage").gameObject;
 
@@ -119,6 +120,7 @@ public class GameManager : MonoBehaviour
 
         backgroundTexture.SetPixels32(greenPixels);
         backgroundTexture.Apply();
+        Debug.Log("aaaaaaaaaaaaaaaaaaaaaaa");
     }
 
     void Update()
@@ -126,7 +128,8 @@ public class GameManager : MonoBehaviour
         // カメラ準備チェック
         if (this.webCamTexture == null || this.webCamTexture.width <= 16 || this.webCamTexture.height <= 16)
             return;
-
+        Debug.Log($"grayMat size: {grayMat.Size()}, channels: {grayMat.Channels()}");
+        Debug.Log($"initialFrame size: {initialFrame.Size()}, channels: {initialFrame.Channels()}");
         // フレーム取得と前処理
         Mat srcMat = OpenCvSharp.Unity.TextureToMat(this.webCamTexture);
         Cv2.CvtColor(srcMat, grayMat, ColorConversionCodes.BGR2GRAY);
@@ -298,13 +301,15 @@ public class GameManager : MonoBehaviour
         WebCamDevice[] devices = WebCamTexture.devices;
         bool cameraFound = false;
 
-        foreach (var device in devices)
+        for (int i = 0; i < devices.Length; i++)
         {
-            Debug.Log("Available camera: " + device.name);
+            var device = devices[i];
+            Debug.Log($"Camera[{i}]: {device.name}");
 
             if (device.name == "HD Webcam eMeet C960")
             {
                 webCamTexture = new WebCamTexture(device.name, 640, 480, 30);
+                cameraIndex = i; // ← 何番目のカメラかを記録
                 cameraFound = true;
                 break;
             }
@@ -318,6 +323,7 @@ public class GameManager : MonoBehaviour
                 // 最初のカメラを選択（通常は内蔵カメラ）
                 webCamTexture = new WebCamTexture(devices[0].name, 640, 480, 30);
                 Debug.Log("外付けカメラが見つからなかったため、内蔵カメラを使用します。");
+                cameraIndex = 0; // ← 何番目のカメラかを記録
             }
             else
             {
@@ -328,6 +334,36 @@ public class GameManager : MonoBehaviour
 
         webCamTexture.Play();
     }
+
+    public void ChangeWebCamera()
+    {
+        GameObject pressedButton = EventSystem.current.currentSelectedGameObject;
+        WebCamDevice[] devices = WebCamTexture.devices;
+        if (devices.Length == 0)
+        {
+            Debug.LogError("カメラが接続されていません。");
+            return;
+        }
+
+        if (webCamTexture != null && webCamTexture.isPlaying)
+        {
+            webCamTexture.Stop();
+            webCamTexture = null;
+        }
+
+        // 次のカメラに切り替え
+        cameraIndex = (cameraIndex + 1) % devices.Length;
+        string selectedDeviceName = devices[cameraIndex].name;
+
+        Debug.Log($"切り替え先カメラ[{cameraIndex}]: {selectedDeviceName}");
+
+        webCamTexture = new WebCamTexture(selectedDeviceName, 640, 480, 30);
+        webCamTexture.Play();
+        RowImageObjects.transform.Find("H1").Find("R2").GetComponent<RawImage>().texture = webCamTexture;
+        pressedButton.transform.Find("Text (TMP)").GetComponent<TextMeshProUGUI>().text = $"カメラ変更\n({cameraIndex})";
+    }
+
+
 
     // アプリケーションが終了する直前に呼ばれる
     private void OnApplicationQuit()
