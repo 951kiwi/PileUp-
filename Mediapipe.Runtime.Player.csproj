@@ -398,8 +398,8 @@
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Unity\Experimental\ImageTransformationOptions.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Calculators\Video\BoxTrackerCalculator.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Util\GlobalInstanceTable.cs" />
-    <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\PInvoke\NativeMethods\Gpu\Gl_Unsafe.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Tasks\Vision\GestureRecognizer\GestureRecognizerOptions.cs" />
+    <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\PInvoke\NativeMethods\Gpu\Gl_Unsafe.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Framework\Formats\ImageFileProperties.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Unity\Annotation\FaceLandmarkListAnnotationController.cs" />
     <Compile Include="Packages\com.github.homuler.mediapipe\Runtime\Scripts\Protobuf\Calculators\Util\RectToRenderScaleCalculator.cs" />

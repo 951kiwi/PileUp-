@@ -488,34 +488,47 @@
     <None Include="Assets\OpenCV+Unity\Plugins\Windows\x86\OpenCvSharpExtern.dll" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
+    <None Include="Assets\RealSenseSDK2.0\Shaders\BGSeg.shader" />
     <None Include="Assets\OpenCV+Unity\Demo\Face_Detector\haarcascade_eye.xml" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap.shader" />
     <None Include="Assets\OpenCV+Unity\Documentation\Third-Party Licenses.txt" />
+    <None Include="Assets\RealSenseSDK2.0\Shaders\UnlitTransparentShader.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Mobile.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
     <None Include="Assets\OpenCV+Unity\smcs.rsp" />
     <None Include="Assets\OpenCV+Unity\gmcs.rsp" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
     <None Include="Assets\Resources\haarcascade_frontalface_default.xml" />
+    <None Include="Assets\RealSenseSDK2.0\Shaders\ARBackground.shader" />
+    <None Include="Assets\RealSenseSDK2.0\Shaders\Custom Skybox.shader" />
     <None Include="Assets\haarcascade_frontalface_default\haarcascade_frontalface_defaultのコピー.txt" />
+    <None Include="Assets\RealSenseSDK2.0\Plugins\Intel.RealSense.dll" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface.shader" />
     <None Include="Assets\OpenCV+Unity\Documentation\OpenCV+Unity_Notes.txt" />
     <None Include="Assets\TextMesh Pro\Sprites\EmojiOne Attribution.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Custom-Atlas.shader" />
     <None Include="Assets\OpenCV+Unity\Demo\Face_Detector\haarcascade_eye_tree_eyeglasses.xml" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF.shader" />
+    <None Include="Assets\RealSenseSDK2.0\Plugins\realsense2.dll" />
     <None Include="Assets\OpenCV+Unity\Plugins\Windows\x86_64\OpenCvSharpExtern.dll" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile SSD.shader" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
+    <None Include="Assets\RealSenseSDK2.0\Shaders\Depth.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
+    <None Include="Assets\RealSenseSDK2.0\Shaders\RGB.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
+    <None Include="Assets\RealSenseSDK2.0\Shaders\BGSeg2.shader" />
+    <None Include="Assets\RealSenseSDK2.0\Shaders\PointCloudGeom.shader" />
     <None Include="Assets\OpenCV+Unity\Demo\Face_Recognizer\face-recognizer.xml" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
+    <None Include="Assets\RealSenseSDK2.0\Shaders\Grayscale.shader" />
     <None Include="Assets\OpenCV+Unity\Demo\Face_Detector\haarcascade_frontalface_default.xml" />
+    <None Include="Assets\RealSenseSDK2.0\Shaders\PointCloud.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF Overlay.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
     <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
+    <None Include="Assets\RealSenseSDK2.0\Shaders\BW.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />
     <None Include="Assets\OpenCV+Unity\mcs.rsp" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Sprite.shader" />
@@ -799,6 +812,10 @@
     </Reference>
     <Reference Include="Google.Protobuf">
       <HintPath>Packages\com.github.homuler.mediapipe\Runtime\Plugins\Protobuf\Google.Protobuf.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Intel.RealSense">
+      <HintPath>Assets\RealSenseSDK2.0\Plugins\Intel.RealSense.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.VisualScripting.Antlr3.Runtime">
@@ -1386,6 +1403,14 @@
     <ProjectReference Include="Mediapipe.Runtime.Player.csproj">
       <Project>{AA78F31D-A9ED-E117-4C92-9631D5CE9AB6}</Project>
       <Name>Mediapipe.Runtime.Player</Name>
+    </ProjectReference>
+    <ProjectReference Include="Utils.Player.csproj">
+      <Project>{B4E8705C-3EBC-6A1C-033B-E90F3D81CFD8}</Project>
+      <Name>Utils.Player</Name>
+    </ProjectReference>
+    <ProjectReference Include="RealSense.Player.csproj">
+      <Project>{E17CD9E9-3758-1BF8-ECA7-FDB9A5504D41}</Project>
+      <Name>RealSense.Player</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

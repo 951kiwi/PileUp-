@@ -108,7 +108,7 @@ public class CreateManager : MonoBehaviour
 
         countdownText.text = "撮影中...";
         //Debug.Log("撮影中...");
-        CaptureImage(); // 画像を撮影
+        //CaptureImage(); // 画像を撮影
         isCountingDown = false;
 
         // 画像を撮影した後、すぐに落下カウントダウンを開始
@@ -385,21 +385,21 @@ public class CreateManager : MonoBehaviour
         scoreText.text = to.ToString("F2") + "m";
     }
 
-    void CaptureImage()
-    {
-        Mat resultMat = gameManager.resultMat;
+    //void CaptureImage()
+    //{
+    //    //Mat resultMat = gameManager.resultMat;
 
-        if (this.dstTexture == null || this.dstTexture.width != resultMat.Width || this.dstTexture.height != resultMat.Height)
-        {
-            this.dstTexture = new Texture2D(resultMat.Width, resultMat.Height, TextureFormat.RGBA32, false);
-        }
-        OpenCvSharp.Unity.MatToTexture(resultMat, this.dstTexture);
-        capturedSprite = Sprite.Create(this.dstTexture, new UnityEngine.Rect(0, 0, this.dstTexture.width, this.dstTexture.height), Vector2.zero);
+    //    if (this.dstTexture == null || this.dstTexture.width != resultMat.Width || this.dstTexture.height != resultMat.Height)
+    //    {
+    //        this.dstTexture = new Texture2D(resultMat.Width, resultMat.Height, TextureFormat.RGBA32, false);
+    //    }
+    //    OpenCvSharp.Unity.MatToTexture(resultMat, this.dstTexture);
+    //    capturedSprite = Sprite.Create(this.dstTexture, new UnityEngine.Rect(0, 0, this.dstTexture.width, this.dstTexture.height), Vector2.zero);
 
-        CreatePreviewObject(capturedSprite);
+    //    CreatePreviewObject(capturedSprite);
         
 
-    }
+    //}
 
     void CreatePreviewObject(Sprite img)
     {
