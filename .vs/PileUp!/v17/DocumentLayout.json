@@ -3,11 +3,15 @@
   "WorkspaceRootPath": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{0A0450BF-CAE7-024B-D642-6F004929DCFC}|Utils.csproj|c:\\users\\aimus\\desktop\\github\\pileup!\\pileup!\\assets\\realsensesdk2.0\\misc\\utils\\minmaxslider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{0A0450BF-CAE7-024B-D642-6F004929DCFC}|Utils.csproj|C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\assets\\realsensesdk2.0\\misc\\utils\\minmaxslider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{0A0450BF-CAE7-024B-D642-6F004929DCFC}|Utils.csproj|solutionrelative:assets\\realsensesdk2.0\\misc\\utils\\minmaxslider.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{4E847E97-566F-94D7-328D-6A175571B082}|RealSense.csproj|c:\\users\\aimus\\desktop\\github\\pileup!\\pileup!\\assets\\realsensesdk2.0\\scripts\\rsstreamtexturerenderer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|c:\\users\\aimus\\desktop\\github\\pileup!\\pileup!\\assets\\scripts\\printer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{4F39CF7B-F688-FDC9-F8BA-FCFA22DE7EEC}|Assembly-CSharp.csproj|solutionrelative:assets\\scripts\\printer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{4E847E97-566F-94D7-328D-6A175571B082}|RealSense.csproj|C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\assets\\realsensesdk2.0\\scripts\\rsstreamtexturerenderer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{4E847E97-566F-94D7-328D-6A175571B082}|RealSense.csproj|solutionrelative:assets\\realsensesdk2.0\\scripts\\rsstreamtexturerenderer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
@@ -90,7 +94,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 2,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -99,6 +103,23 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Printer.cs",
+              "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\Printer.cs",
+              "RelativeDocumentMoniker": "Assets\\Scripts\\Printer.cs",
+              "ToolTip": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\Printer.cs",
+              "RelativeToolTip": "Assets\\Scripts\\Printer.cs",
+              "ViewState": "AgIAAEAAAAAAAAAAAAAmwG8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-07-24T14:40:51.111Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{e5c86464-96be-4d7c-9a8b-abcb3bbf5f92}"
             },
             {
               "$type": "Document",
@@ -114,12 +135,8 @@
               "EditorCaption": ""
             },
             {
-              "$type": "Bookmark",
-              "Name": "ST:0:0:{e5c86464-96be-4d7c-9a8b-abcb3bbf5f92}"
-            },
-            {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "RsStreamTextureRenderer.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\RealSenseSDK2.0\\Scripts\\RsStreamTextureRenderer.cs",
               "RelativeDocumentMoniker": "Assets\\RealSenseSDK2.0\\Scripts\\RsStreamTextureRenderer.cs",
@@ -127,12 +144,11 @@
               "RelativeToolTip": "Assets\\RealSenseSDK2.0\\Scripts\\RsStreamTextureRenderer.cs",
               "ViewState": "AgIAAKAAAAAAAAAAAAAmwAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-07-16T15:41:36.109Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-16T15:41:36.109Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "BGSeg2.shader",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\RealSenseSDK2.0\\Shaders\\BGSeg2.shader",
               "RelativeDocumentMoniker": "Assets\\RealSenseSDK2.0\\Shaders\\BGSeg2.shader",
@@ -144,7 +160,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 4,
               "Title": "RsProcessingPipe.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\RealSenseSDK2.0\\Scripts\\RsProcessingPipe.cs",
               "RelativeDocumentMoniker": "Assets\\RealSenseSDK2.0\\Scripts\\RsProcessingPipe.cs",
@@ -156,7 +172,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 6,
               "Title": "RsPointCloudRenderer.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\RealSenseSDK2.0\\Scripts\\RsPointCloudRenderer.cs",
               "RelativeDocumentMoniker": "Assets\\RealSenseSDK2.0\\Scripts\\RsPointCloudRenderer.cs",
@@ -168,7 +184,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 5,
               "Title": "GameManager.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\GameManager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\GameManager.cs",
@@ -180,7 +196,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 7,
               "Title": "GameManager1.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\GameManager1.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\GameManager1.cs",
@@ -192,7 +208,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 12,
               "Title": "GameOver.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\GameOver.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\GameOver.cs",
@@ -204,7 +220,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 10,
               "Title": "RankingManager.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\RankingManager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\RankingManager.cs",
@@ -216,7 +232,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 8,
               "Title": "CreateManager.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\CreateManager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\CreateManager.cs",
@@ -228,7 +244,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 14,
               "Title": "DebugWindowCreater.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\DebugWindowCreater.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\DebugWindowCreater.cs",
@@ -240,7 +256,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 9,
               "Title": "ScreemShot.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\ScreemShot.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\ScreemShot.cs",
@@ -252,7 +268,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 11,
               "Title": "SleepShow.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\SleepShow.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\SleepShow.cs",
@@ -264,7 +280,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 20,
               "Title": "AnimalGenerator.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\AnimalGenerator.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\AnimalGenerator.cs",
@@ -276,7 +292,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 13,
               "Title": "DontDestroyObject.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\DontDestroyObject.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\DontDestroyObject.cs",
@@ -288,7 +304,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 15,
               "Title": "FixedVerticalAspect.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\FixedVerticalAspect.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\FixedVerticalAspect.cs",
@@ -300,7 +316,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "inSleep.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\inSleep.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\inSleep.cs",
@@ -312,7 +328,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 18,
               "Title": "AlphabetOCRScene.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\OpenCV\u002BUnity\\Demo\\OCR.Alphabet\\AlphabetOCRScene.cs",
               "RelativeDocumentMoniker": "Assets\\OpenCV\u002BUnity\\Demo\\OCR.Alphabet\\AlphabetOCRScene.cs",
@@ -324,7 +340,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "ContoursByShapeScript.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\OpenCV\u002BUnity\\Demo\\Identifiy_Contours_by_Shape\\ContoursByShapeScript.cs",
               "RelativeDocumentMoniker": "Assets\\OpenCV\u002BUnity\\Demo\\Identifiy_Contours_by_Shape\\ContoursByShapeScript.cs",
@@ -336,7 +352,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 19,
               "Title": "TitleScreenManager.cs",
               "DocumentMoniker": "C:\\Users\\aimus\\Desktop\\github\\PileUp!\\PileUp!\\Assets\\Scripts\\TitleScreenManager.cs",
               "RelativeDocumentMoniker": "Assets\\Scripts\\TitleScreenManager.cs",

@@ -636,6 +636,22 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3362671361666061933, guid: 50b518e4047e56049bb2ac422a648769, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3362671361666061933, guid: 50b518e4047e56049bb2ac422a648769, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3362671361666061933, guid: 50b518e4047e56049bb2ac422a648769, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3362671361666061933, guid: 50b518e4047e56049bb2ac422a648769, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3446680041525712180, guid: 50b518e4047e56049bb2ac422a648769, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -1055,6 +1071,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1444346314}
   - component: {fileID: 1444346315}
+  - component: {fileID: 1444346316}
   m_Layer: 0
   m_Name: GameObject
   m_TagString: Untagged
@@ -1094,6 +1111,22 @@ MonoBehaviour:
   finalScoreRankingText: {fileID: 1927778309}
   timerBarImage: {fileID: 913886015}
   Screenshot: {fileID: 1655359910}
+--- !u!114 &1444346316
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1444346312}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b8b107986db3804d84bb8ccb924c274, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  targetCamera: {fileID: 499483868}
+  width: 1080
+  height: 1920
+  printAppPath: C:\Users\aimus\source\repos\printer\printer\bin\Debug\net8.0\printer.exe
 --- !u!1 &1527226133
 GameObject:
   m_ObjectHideFlags: 0
@@ -1309,8 +1342,8 @@ Canvas:
   m_GameObject: {fileID: 1817252141}
   m_Enabled: 1
   serializedVersion: 3
-  m_RenderMode: 0
-  m_Camera: {fileID: 0}
+  m_RenderMode: 1
+  m_Camera: {fileID: 499483868}
   m_PlaneDistance: 100
   m_PixelPerfect: 0
   m_ReceivesEvents: 1
