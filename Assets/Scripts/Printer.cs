@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.IO;
 using System.Diagnostics;
+using System.Collections;
 using System;
 
 public class CameraPrintManager : MonoBehaviour
@@ -12,11 +13,12 @@ public class CameraPrintManager : MonoBehaviour
 
     private void Start()
     {
-        CaptureAndPrint();
+        StartCoroutine(DelayedCapture());
     }
 
-    void CaptureAndPrint()
+    private IEnumerator DelayedCapture()
     {
+        yield return new WaitForSeconds(1f); // 2•b‘Ò‚Â
         Texture2D captured = CaptureFromCamera(targetCamera, width, height);
         Texture2D processed = ApplyGrayscaleAndEdge(captured);
         string imagePath = SaveToPNG(captured, "print_image.png");

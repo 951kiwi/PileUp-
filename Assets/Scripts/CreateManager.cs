@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using OpenCvSharp;
 using System;
 using System.IO;
 using System.Linq;
@@ -14,8 +13,6 @@ using static UnityEngine.GraphicsBuffer;
 public class CreateManager : MonoBehaviour
 {
     public RawImage rawImage; // RawImage UI 要素　撮影前
-    public RawImage cameraDisplay; // カメラ映像を表示する RawImage
-    public WebCamTexture webCamTexture; // WebCamTextureを使ってカメラ映像を取得
 
     public static float FinalResult = 0;//最終結果
     public static string FinalformattedNumber;
@@ -108,7 +105,7 @@ public class CreateManager : MonoBehaviour
 
         countdownText.text = "撮影中...";
         //Debug.Log("撮影中...");
-        //CaptureImage(); // 画像を撮影
+        CaptureImage(); // 画像を撮影
         isCountingDown = false;
 
         // 画像を撮影した後、すぐに落下カウントダウンを開始
@@ -127,7 +124,14 @@ public class CreateManager : MonoBehaviour
     IEnumerator StartDropCountdown()
     {
         // プレビューオブジェクトの位置を更新
-        previewObject.transform.position = new Vector2(9.3f, nowObjectHeight + 15f);
+        if (previewObject != null)
+        {
+            previewObject.transform.position = new Vector2(9.3f, nowObjectHeight + 24.3f);
+        }
+        else
+        {
+            Debug.LogWarning("previewObject is null in StartDropCountdown");
+        }
 
         if (isCountingDown)
             yield break;
@@ -385,21 +389,18 @@ public class CreateManager : MonoBehaviour
         scoreText.text = to.ToString("F2") + "m";
     }
 
-    //void CaptureImage()
-    //{
-    //    //Mat resultMat = gameManager.resultMat;
+    void CaptureImage()
+    {
 
-    //    if (this.dstTexture == null || this.dstTexture.width != resultMat.Width || this.dstTexture.height != resultMat.Height)
-    //    {
-    //        this.dstTexture = new Texture2D(resultMat.Width, resultMat.Height, TextureFormat.RGBA32, false);
-    //    }
-    //    OpenCvSharp.Unity.MatToTexture(resultMat, this.dstTexture);
-    //    capturedSprite = Sprite.Create(this.dstTexture, new UnityEngine.Rect(0, 0, this.dstTexture.width, this.dstTexture.height), Vector2.zero);
+        if (gameManager.resultTexture != null)
+        {
+            // resultTexture を使って Sprite を作る
+            capturedSprite = Sprite.Create(gameManager.resultTexture, new Rect(0, 0, gameManager.resultTexture.width, gameManager.resultTexture.height), Vector2.zero);
+            CreatePreviewObject(capturedSprite);
+        }
 
-    //    CreatePreviewObject(capturedSprite);
-        
 
-    //}
+    }
 
     void CreatePreviewObject(Sprite img)
     {
@@ -419,7 +420,8 @@ public class CreateManager : MonoBehaviour
         spriteRenderer.sprite = newSprite;
 
         // サイズのスケールを設定（例: 0.5倍のサイズにする）
-        previewObject.transform.localScale = new Vector3(-2.9f, 2.9f, 1f);
+        previewObject.transform.localScale = new Vector3(-2.9f, -2.9f, 1f);
+
 
         // PolygonColliderを追加し、画像の透明部分を無視する
         PolygonCollider2D polygonCollider = previewObject.AddComponent<PolygonCollider2D>();
@@ -465,7 +467,7 @@ public class CreateManager : MonoBehaviour
             // プレビューオブジェクトの位置を固定
             if (previewObject != null)
             {
-                previewObject.transform.position = new Vector3(9.3f, maxObjectHeight + 15, 0); // 固定位置に設定
+                previewObject.transform.position = new Vector3(9.3f, maxObjectHeight + 24.3f, 0); // 固定位置に設定
             }
 
             people.Add(previewObject);

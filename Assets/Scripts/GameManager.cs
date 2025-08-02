@@ -8,6 +8,7 @@ using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
 using Intel.RealSense;
+using Unity.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -17,33 +18,32 @@ public class GameManager : MonoBehaviour
     private GameObject RowImageObjects;
     private int cameraIndex;
 
-    public WebCamTexture webCamTexture; // WebCamTextureを使ってカメラ映像を取得
-
     bool isBackgroundCaptured = false; // 背景画像がキャプチャされたかを示すフラグ
 
-    public int sabun1 = 40;
     public int fallKernelSize = 5;
-    public int NoiseKernelSize = 3;
 
     public float maxScore;
     public Texture2D maxScoreScreenshot;
+    public TextMeshProUGUI depthText; // Unityエディタでアサイン
 
     // フィールド変数に追加しておく
-    private Texture2D backgroundTexture, binaryTexture, initialFrameTexture, diffTexture;
     public Texture2D resultTexture;
-    Texture2D binaryTexture1, binaryTexture2, binaryTexture3, binaryTexture4, binaryTexture5, binaryTexture6;
+    Texture2D floorRGBTexture, floorDepthTexture, depthTexture, outputTexture;
+    [SerializeField]
+    private RawImage RGBImage, depthImage, floorRGBImage, floorDepthImage, sampleImage, syncImage;
+    [SerializeField]
+    private int floorBorderY = 50;
+    [SerializeField]
+    private int floorDifference = 5;
+    [SerializeField, Header("floorの上下を変更しますか")]
+    private bool inversionFloorY = false;
 
+    [SerializeField]
+    private int minDepth, MaxDepth;
 
-
-    private Pipeline pipeline;
-    public Texture2D depthTexture;
-    private Texture2D Cam_ColorTexture;
-    public RawImage Cam_ColorImage;
-    public RawImage Cam_displayImage;
-    public int width = 640;
-    public int height = 480;
-    public float maxDistance = 2.0f; // 距離の最大値（2mなど）
-    private Align align;
+    public event Action<ushort[]> OnDepthFrameReceived;
+    private const int width = 640;
+    private const int height = 480;
 
 
     void Awake()
@@ -57,100 +57,217 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        if (webCamTexture)
-        {
-            webCamTexture.Stop();
-        }
     }
+    public void HandleDepthFrame(ushort[] depthData)
+    {
 
+        if (depthData == null)
+        {
+            Debug.Log("HandleDepthFrame called");
+            return;
+        }
+
+        Color32[] pixels = new Color32[width * height];
+
+        // 基準の床デプスデータを z16 ushort[] に変換しておく
+        Color32[] floorPixels = floorDepthTexture.GetPixels32();
+        ushort[] floorDepths = new ushort[width * height];
+
+        for (int i = 0; i < floorPixels.Length; i++)
+        {
+            // z16 は16bitの深度値：ここでは R + G<<8 に変換（保存時の方式に依存）
+            floorDepths[i] = (ushort)(floorPixels[i].r | (floorPixels[i].g << 8));
+        }
+
+
+        for (int i = 0; i < width * height; i++)
+        {
+            ushort current = depthData[i];
+            ushort floor = floorDepths[i];
+
+            if(floor != 0 && current != 0)//黒の部分じゃなければ
+                {
+                int diff = Mathf.Abs(current - floor);
+                if (diff >= floorDifference)
+                {
+                    // 差分が大きければ緑
+                    pixels[i] = new Color32(0, 255, 0, 255);
+                }
+                else
+                {
+                    pixels[i] = new Color32(0, 0, 0, 255); // 黒
+                }
+            }
+            else if(current > minDepth && current <= MaxDepth)
+            {
+
+                // 通常の青
+                pixels[i] = new Color32(0, 0, 255, 255);
+            }
+            else
+            {
+                pixels[i] = new Color32(0, 0, 0, 255); // 黒
+            }
+        }
+
+        depthTexture.SetPixels32(pixels);
+        depthTexture.Apply();
+    }
 
     void Start()
     {
+        depthTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        outputTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        floorRGBTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        floorDepthTexture = new Texture2D(width, height, TextureFormat.R16, false);
 
-        depthTexture = new Texture2D(width, height, TextureFormat.RGB24, false);
-        Cam_ColorTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
-        Cam_displayImage.texture = depthTexture;
-        Cam_ColorImage.texture = Cam_ColorTexture;
-
-        backgroundTexture = new Texture2D(640, 480, TextureFormat.RGBA32, false);
-        resultTexture = new Texture2D(640, 480, TextureFormat.RGBA32, false);
-        binaryTexture = new Texture2D(640, 480, TextureFormat.RGBA32, false);
-        binaryTexture1 = new Texture2D(640, 480, TextureFormat.RGBA32, false);
-        binaryTexture2 = new Texture2D(640, 480, TextureFormat.RGBA32, false);
-        binaryTexture3 = new Texture2D(640, 480, TextureFormat.RGBA32, false);
-        binaryTexture4 = new Texture2D(640, 480, TextureFormat.RGBA32, false);
-        binaryTexture5 = new Texture2D(640, 480, TextureFormat.RGBA32, false);
-        binaryTexture6 = new Texture2D(640, 480, TextureFormat.RGBA32, false);
-        initialFrameTexture = new Texture2D(640, 480, TextureFormat.RGBA32, false);
-        diffTexture = new Texture2D(640, 480, TextureFormat.RGBA32, false);
 
 
         RowImageObjects = DebugObject.transform.Find("DebugCanvas").Find("RowImage").gameObject;
 
         // スライダー初期値の同期
-        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider").GetComponent<Slider>().value = sabun1;
-        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider2").GetComponent<Slider>().value = NoiseKernelSize;
-        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider3").GetComponent<Slider>().value = fallKernelSize;
-        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider").Find("valueText").GetComponent<TextMeshProUGUI>().text = sabun1.ToString();
-        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider2").Find("valueText").GetComponent<TextMeshProUGUI>().text = NoiseKernelSize.ToString();
-        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider3").Find("valueText").GetComponent<TextMeshProUGUI>().text = fallKernelSize.ToString();
+        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider").GetComponent<Slider>().value = floorBorderY;
+        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider2").GetComponent<Slider>().value = floorDifference;
+        RowImageObjects.transform.Find("H2").Find("Other").Find("DepthSlider").Find("min").GetComponent<Slider>().value = minDepth;
+        RowImageObjects.transform.Find("H2").Find("Other").Find("DepthSlider").Find("max").GetComponent<Slider>().value = MaxDepth;
+        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider").Find("valueText").GetComponent<TextMeshProUGUI>().text = floorBorderY.ToString();
+        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider2").Find("valueText").GetComponent<TextMeshProUGUI>().text = floorDifference.ToString();
+        RowImageObjects.transform.Find("H2").Find("Other").Find("DepthSlider").Find("minText").GetComponent<TextMeshProUGUI>().text = minDepth.ToString();
+        RowImageObjects.transform.Find("H2").Find("Other").Find("DepthSlider").Find("maxText").GetComponent<TextMeshProUGUI>().text = MaxDepth.ToString();
 
-        //RowImageObjects.transform.Find("H1").Find("R1").GetComponent<RawImage>().texture = backgroundTexture;
-        //RowImageObjects.transform.Find("H1").Find("R2").GetComponent<RawImage>().texture = webCamTexture;
-        //RowImageObjects.transform.Find("H1").Find("R3").GetComponent<RawImage>().texture = diffTexture;
-        //RowImageObjects.transform.Find("H2").Find("H3").Find("H1").Find("R5").GetComponent<RawImage>().texture = binaryTexture;
-        //RowImageObjects.transform.Find("H2").Find("H3").Find("H1").Find("R6").GetComponent<RawImage>().texture = binaryTexture1;
-        //RowImageObjects.transform.Find("H2").Find("H3").Find("H1").Find("R7").GetComponent<RawImage>().texture = binaryTexture2;
-        //RowImageObjects.transform.Find("H2").Find("H3").Find("H2").Find("R8").GetComponent<RawImage>().texture = binaryTexture3;
-        //RowImageObjects.transform.Find("H2").Find("H3").Find("H2").Find("R9").GetComponent<RawImage>().texture = binaryTexture4;
-        //RowImageObjects.transform.Find("H2").Find("H3").Find("H2").Find("R10").GetComponent<RawImage>().texture = binaryTexture5;
+        sampleImage.texture = depthTexture;
+        syncImage.texture = outputTexture;
+        floorRGBImage.texture = floorRGBTexture;
+        floorDepthImage.texture = floorDepthTexture;
+        resultTexture = outputTexture;
         //RowImageObjects.transform.Find("H2").Find("R5").GetComponent<RawImage>().texture = resultTexture;
 
+    }
 
-        // 全ピクセルを緑に
-        Color32[] greenPixels = new Color32[640 * 480];
-        for (int i = 0; i < greenPixels.Length; i++)
+    public void TakeFloorBorder()
+    {
+        Color32[] originalPixels = ((Texture2D)RGBImage.texture).GetPixels32();
+        ushort[] originalDepthData = ((Texture2D)depthImage.texture).GetRawTextureData<ushort>().ToArray();
+        Color32[] resultPixels = new Color32[originalPixels.Length];
+        ushort[] resultDepthData = new ushort[originalDepthData.Length];
+        for (int y = 0; y < height; y++)
         {
-            greenPixels[i] = new Color32(0, 255, 0, 255); // RGBA = 緑
+            for (int x = 0; x < width; x++)
+            {
+                if (inversionFloorY)
+                {
+                    int flippedY = height - 1 - y;
+                    int i = flippedY * width + x;
+
+                    if (y > floorBorderY)
+                    {
+                        // 床部分 → コピー
+                        resultPixels[i] = originalPixels[i];
+                        resultDepthData[i] = originalDepthData[i];
+                    }
+                    else if (y == floorBorderY || y + 1 == floorBorderY || y + 2 == floorBorderY || y + 3 == floorBorderY || y + 4 == floorBorderY || y + 5 == floorBorderY)
+                    {
+                        // 境界線 → 赤
+                        resultPixels[i] = new Color32(255, 0, 0, 255);
+                    }
+                    else
+                    {
+                        // それより上 → 完全に透明
+                        resultPixels[i] = new Color32(0, 0, 0, 0);
+                        resultDepthData[i] = 0;
+                    }
+                }
+                else
+                {
+                    int i = y * width + x;
+
+                    if (y > floorBorderY)
+                    {
+                        // 床部分 → コピー
+                        resultPixels[i] = originalPixels[i];
+                        resultDepthData[i] = originalDepthData[i];
+                    }
+                    else if (y == floorBorderY || y + 1 == floorBorderY || y + 2 == floorBorderY || y + 3 == floorBorderY || y + 4 == floorBorderY || y + 5 == floorBorderY)
+                    {
+                        // 境界線 → 赤
+                        resultPixels[i] = new Color32(255, 0, 0, 255);
+                    }
+                    else
+                    {
+                        // それより上 → 完全に透明
+                        resultPixels[i] = new Color32(0, 0, 0, 0);
+                        resultDepthData[i] = 0;
+                    }
+                }
+
+            }
         }
 
-        backgroundTexture.SetPixels32(greenPixels);
-        backgroundTexture.Apply();
-        Debug.Log("aaaaaaaaaaaaaaaaaaaaaaa");
+        floorRGBTexture.SetPixels32(resultPixels);
+        floorRGBTexture.Apply();
+        var rawData = floorDepthTexture.GetRawTextureData<ushort>();
+        NativeArray<ushort>.Copy(resultDepthData, rawData);
+        floorDepthTexture.Apply();
+
     }
-
-
-    void InitRealSenceCam()
+    private void Update()
     {
-        pipeline = new Pipeline();
-        var cfg = new Config();
-        cfg.EnableStream(Stream.Depth, 640, 480, Format.Z16, 30);
-        cfg.EnableStream(Stream.Color, 640, 480, Format.Rgba8, 30);
-        try
+        ObjectGenerater();
+    }
+    void ObjectGenerater()
+    {
+        if (depthTexture == null)
+            return;
+
+        if (RGBImage == null || RGBImage.texture == null)
         {
-            pipeline.Start(cfg);
+            Debug.LogWarning("RGBImage またはそのテクスチャがセットされていません");
+            return;
         }
-        catch (Exception e)
+
+        // R3 から青いピクセル情報を取得
+        Color32[] depthPixels = depthTexture.GetPixels32(); // 青領域マスク（R3）
+        Color32[] colorPixels = ((Texture2D)RGBImage.texture).GetPixels32(); // RGB画像
+        Color32[] resultPixels = new Color32[depthPixels.Length];
+
+        for (int i = 0; i < depthPixels.Length; i++)
         {
-            Debug.LogError("RealSense Start failed: " + e.Message);
+            // R3のピクセルが青（0, 0, 255）なら、R1のRGB値をそのまま使う
+            if (depthPixels[i].b == 255 && depthPixels[i].r == 0 && depthPixels[i].g == 0 || (depthPixels[i].b == 0 && depthPixels[i].g == 255 && depthPixels[i].r == 0))
+            {
+                resultPixels[i] = colorPixels[i];
+                resultPixels[i].a = 255; // 不透明
+            }
+            else
+            {
+                resultPixels[i] = new Color32(0, 0, 0, 0); // 完全に透明
+            }
         }
+
+        outputTexture.SetPixels32(resultPixels);
+        outputTexture.Apply();
     }
 
 
-    public void changed_Sabun1(int value)
+    public void changed_floorBorderY(int value)
     {
-        sabun1 = (int)RowImageObjects.transform.Find("H2").Find("Other").Find("Slider").GetComponent<Slider>().value;
-        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider").Find("valueText").GetComponent<TextMeshProUGUI>().text = sabun1.ToString();
+        floorBorderY = (int)RowImageObjects.transform.Find("H2").Find("Other").Find("Slider").GetComponent<Slider>().value;
+        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider").Find("valueText").GetComponent<TextMeshProUGUI>().text = floorBorderY.ToString();
     }
-    public void changed_Sabun2(int value)
+    public void changed_floorDifference(int value)
     {
-        NoiseKernelSize = (int)RowImageObjects.transform.Find("H2").Find("Other").Find("Slider2").GetComponent<Slider>().value;
-        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider2").Find("valueText").GetComponent<TextMeshProUGUI>().text = NoiseKernelSize.ToString();
+        floorDifference = (int)RowImageObjects.transform.Find("H2").Find("Other").Find("Slider2").GetComponent<Slider>().value;
+        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider2").Find("valueText").GetComponent<TextMeshProUGUI>().text = floorDifference.ToString();
     }
-    public void changed_Sabun3(int value)
+    public void changed_minDepth(int value)
     {
-        fallKernelSize = (int)RowImageObjects.transform.Find("H2").Find("Other").Find("Slider3").GetComponent<Slider>().value;
-        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider3").Find("valueText").GetComponent<TextMeshProUGUI>().text = fallKernelSize.ToString();
+        minDepth = (int)RowImageObjects.transform.Find("H2").Find("Other").Find("DepthSlider").Find("min").GetComponent<Slider>().value;
+        RowImageObjects.transform.Find("H2").Find("Other").Find("DepthSlider").Find("minText").GetComponent<TextMeshProUGUI>().text = minDepth.ToString();
+    }
+    public void changed_maxDepth(int value)
+    {
+        MaxDepth = (int)RowImageObjects.transform.Find("H2").Find("Other").Find("DepthSlider").Find("max").GetComponent<Slider>().value;
+        RowImageObjects.transform.Find("H2").Find("Other").Find("DepthSlider").Find("maxText").GetComponent<TextMeshProUGUI>().text = MaxDepth.ToString();
     }
 
 }

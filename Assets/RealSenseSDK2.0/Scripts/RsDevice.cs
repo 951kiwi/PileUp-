@@ -4,6 +4,7 @@ using UnityEngine;
 using Intel.RealSense;
 using System.Collections;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 /// <summary>
 /// Manages streaming using a RealSense Device
@@ -65,6 +66,42 @@ public class RsDevice : RsFrameProvider
 
     void OnEnable()
     {
+        // シーン切り替えイベント登録
+        SceneManager.sceneLoaded += OnSceneLoaded;
+
+    }
+    void Start()
+    {
+        StopCamera();
+        StartCamera(); // 最初の起動時にも確実に呼ばれる
+    }
+
+    public void restartCamera()
+    {
+        StopCamera();
+        StartCamera(); 
+    }
+    void OnDisable()
+    {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
+
+        // カメラ停止処理
+        StopCamera();
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        Debug.Log("Scene loaded: " + scene.name);
+
+        // シーン切り替え時にカメラ再構築
+        StartCamera();
+    }
+
+    private void StartCamera()
+    {
+        if (m_pipeline != null)
+            return; // 既に起動済みなら何もしない
+
         m_pipeline = new Pipeline();
 
         using (var cfg = DeviceConfiguration.ToPipelineConfig())
@@ -80,26 +117,18 @@ public class RsDevice : RsFrameProvider
             worker.Start();
         }
 
-        StartCoroutine(WaitAndStart());
-    }
-
-    IEnumerator WaitAndStart()
-    {
-        yield return new WaitForEndOfFrame();
         Streaming = true;
         if (OnStart != null)
             OnStart(ActiveProfile);
     }
 
-    void OnDisable()
+    private void StopCamera()
     {
-        OnNewSample = null;
-        // OnNewSampleSet = null;
-
         if (worker != null)
         {
             stopEvent.Set();
             worker.Join();
+            worker = null;
         }
 
         if (Streaming && OnStop != null)
@@ -113,14 +142,26 @@ public class RsDevice : RsFrameProvider
 
         if (m_pipeline != null)
         {
-            // if (Streaming)
-            // m_pipeline.Stop();
+            m_pipeline.Stop();
             m_pipeline.Dispose();
             m_pipeline = null;
         }
 
         Streaming = false;
     }
+
+    // 既存のWaitForFramesやUpdateはそのまま
+
+
+IEnumerator WaitAndStart()
+    {
+        yield return new WaitForEndOfFrame();
+        Streaming = true;
+        if (OnStart != null)
+            OnStart(ActiveProfile);
+    }
+
+
 
     void OnDestroy()
     {
