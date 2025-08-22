@@ -51,6 +51,8 @@ public class CreateManager : MonoBehaviour
     public Camera ScreenShotCamera;
     public GameObject nowRanking;
     public GameObject heightBarObject;
+    public GameObject heightBarObject2;
+    public GameObject heightBarObject3;
 
     //SE再生用変数
     public AudioSource audioSource;
@@ -76,7 +78,7 @@ public class CreateManager : MonoBehaviour
     {
         
         //ゲームオーバー判定
-        if (CheckGameOver(people) && people.Count > 0)
+        if (CheckGameOver() && people.Count > 0)
         {
             gameManager.maxScore = maxObjectHeight;
             ScreenShot screenshot = gameManager.gameObject.GetComponent<ScreenShot>();
@@ -89,6 +91,7 @@ public class CreateManager : MonoBehaviour
         {
             rawImage.texture = gameManager.resultTexture;
         }
+        
     }
 
     IEnumerator StartCountdown()
@@ -109,7 +112,7 @@ public class CreateManager : MonoBehaviour
         isCountingDown = false;
 
         // 画像を撮影した後、すぐに落下カウントダウンを開始
-        if (!CheckGameOver(people))
+        if (!CheckGameOver())
         {
             // RawImage を非表示にする
             if (rawImage != null)
@@ -227,7 +230,7 @@ public class CreateManager : MonoBehaviour
 
 
         // 待機時間後に撮影カウントダウンを開始
-        if (!CheckGameOver(people))
+        if (!CheckGameOver())
         {
             StartCoroutine(StartCountdown());
         }
@@ -259,6 +262,7 @@ public class CreateManager : MonoBehaviour
         }
         Debug.Log(nowObjectHeight);
     }
+
     int oldRanking = 1000;
     private void rankingController(float score)
     {
@@ -476,7 +480,7 @@ public class CreateManager : MonoBehaviour
         countdownText.text = ""; // カウントダウン表示をリセット
     }
 
-    bool CheckGameOver(List<GameObject> animals)
+    /*bool CheckGameOver(List<GameObject> animals)
     {
         foreach (var animal in animals)
         {
@@ -484,6 +488,22 @@ public class CreateManager : MonoBehaviour
             {
                 return true;
             }
+        }
+        return false;
+    }*/
+    bool CheckGameOver()
+    {
+        if (people == null || people.Count == 0)
+            return false; // 判定不能なら GameOver にはしない
+
+        float min = people.Min(obj =>
+        {
+            var collider = obj.GetComponent<Collider2D>(); // or Collider for 3D
+            return collider.bounds.min.y;
+        });
+        if (people != null && min < -10)
+        {
+            return true;
         }
         return false;
     }

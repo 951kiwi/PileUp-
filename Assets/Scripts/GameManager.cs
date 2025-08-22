@@ -9,6 +9,7 @@ using TMPro;
 using UnityEngine.EventSystems;
 using Intel.RealSense;
 using Unity.Collections;
+using System.IO;
 
 public class GameManager : MonoBehaviour
 {
@@ -45,6 +46,8 @@ public class GameManager : MonoBehaviour
     private const int width = 640;
     private const int height = 480;
 
+    string path = @"C:\Users\aimus\Desktop\imagedebug.png";
+
     public bool isPrinter = true;
 
 
@@ -59,6 +62,31 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        depthTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        outputTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        floorRGBTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
+        floorDepthTexture = new Texture2D(width, height, TextureFormat.R16, false);
+
+
+
+        RowImageObjects = DebugObject.transform.Find("DebugCanvas").Find("RowImage").gameObject;
+
+        // スライダー初期値の同期
+        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider").GetComponent<Slider>().value = floorBorderY;
+        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider2").GetComponent<Slider>().value = floorDifference;
+        RowImageObjects.transform.Find("H2").Find("Other").Find("DepthSlider").Find("min").GetComponent<Slider>().value = minDepth;
+        RowImageObjects.transform.Find("H2").Find("Other").Find("DepthSlider").Find("max").GetComponent<Slider>().value = MaxDepth;
+        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider").Find("valueText").GetComponent<TextMeshProUGUI>().text = floorBorderY.ToString();
+        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider2").Find("valueText").GetComponent<TextMeshProUGUI>().text = floorDifference.ToString();
+        RowImageObjects.transform.Find("H2").Find("Other").Find("DepthSlider").Find("minText").GetComponent<TextMeshProUGUI>().text = minDepth.ToString();
+        RowImageObjects.transform.Find("H2").Find("Other").Find("DepthSlider").Find("maxText").GetComponent<TextMeshProUGUI>().text = MaxDepth.ToString();
+
+        sampleImage.texture = depthTexture;
+        syncImage.texture = outputTexture;
+        floorRGBImage.texture = floorRGBTexture;
+        floorDepthImage.texture = floorDepthTexture;
+        resultTexture = outputTexture;
+        //RowImageObjects.transform.Find("H2").Find("R5").GetComponent<RawImage>().texture = resultTexture;
     }
 
     public void HandleDepthFrame(ushort[] depthData)
@@ -123,32 +151,37 @@ public class GameManager : MonoBehaviour
     }
     void Start()
     {
-        depthTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
-        outputTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
-        floorRGBTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);
-        floorDepthTexture = new Texture2D(width, height, TextureFormat.R16, false);
 
 
+    }
 
-        RowImageObjects = DebugObject.transform.Find("DebugCanvas").Find("RowImage").gameObject;
 
-        // スライダー初期値の同期
-        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider").GetComponent<Slider>().value = floorBorderY;
-        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider2").GetComponent<Slider>().value = floorDifference;
-        RowImageObjects.transform.Find("H2").Find("Other").Find("DepthSlider").Find("min").GetComponent<Slider>().value = minDepth;
-        RowImageObjects.transform.Find("H2").Find("Other").Find("DepthSlider").Find("max").GetComponent<Slider>().value = MaxDepth;
-        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider").Find("valueText").GetComponent<TextMeshProUGUI>().text = floorBorderY.ToString();
-        RowImageObjects.transform.Find("H2").Find("Other").Find("Slider2").Find("valueText").GetComponent<TextMeshProUGUI>().text = floorDifference.ToString();
-        RowImageObjects.transform.Find("H2").Find("Other").Find("DepthSlider").Find("minText").GetComponent<TextMeshProUGUI>().text = minDepth.ToString();
-        RowImageObjects.transform.Find("H2").Find("Other").Find("DepthSlider").Find("maxText").GetComponent<TextMeshProUGUI>().text = MaxDepth.ToString();
+    public void LoadPNGToOutputTexture()
+    {
+        if (!File.Exists(path))
+        {
+            Debug.LogError("画像ファイルが見つかりません: " + path);
+            return;
+        }
 
-        sampleImage.texture = depthTexture;
-        syncImage.texture = outputTexture;
-        floorRGBImage.texture = floorRGBTexture;
-        floorDepthImage.texture = floorDepthTexture;
-        resultTexture = outputTexture;
-        //RowImageObjects.transform.Find("H2").Find("R5").GetComponent<RawImage>().texture = resultTexture;
+        byte[] fileData = File.ReadAllBytes(path);
 
+        // 新規生成 (幅・高さはダミーでOK。LoadImageで正しいサイズにリサイズされる)
+        if (outputTexture == null)
+        {
+            outputTexture = new Texture2D(2, 2, TextureFormat.RGBA32, false);
+            syncImage.texture = outputTexture; // UIに反映
+        }
+
+        if (!outputTexture.LoadImage(fileData))
+        {
+            Debug.LogError("画像の読み込みに失敗しました");
+        }
+        else
+        {
+            Debug.Log("outputTexture に画像をロードしました: " +
+                      outputTexture.width + "x" + outputTexture.height);
+        }
     }
 
     public void TakeFloorBorder()
@@ -220,6 +253,7 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         ObjectGenerater();
+        //LoadPNGToOutputTexture();
     }
     void ObjectGenerater()
     {
