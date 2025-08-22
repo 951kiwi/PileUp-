@@ -45,6 +45,8 @@ public class GameManager : MonoBehaviour
     private const int width = 640;
     private const int height = 480;
 
+    public bool isPrinter = true;
+
 
     void Awake()
     {
@@ -58,6 +60,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
     public void HandleDepthFrame(ushort[] depthData)
     {
 
@@ -113,7 +116,11 @@ public class GameManager : MonoBehaviour
         depthTexture.SetPixels32(pixels);
         depthTexture.Apply();
     }
-
+    public void ChangePrinterMode(bool data)
+    {
+        isPrinter = data;
+        Debug.Log($"プリンターモードを変更しました{data}");
+    }
     void Start()
     {
         depthTexture = new Texture2D(width, height, TextureFormat.RGBA32, false);

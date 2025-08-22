@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 using System.IO;
 using System.Diagnostics;
 using System.Collections;
@@ -9,11 +10,18 @@ public class CameraPrintManager : MonoBehaviour
     public Camera targetCamera;
     public int width = 512;
     public int height = 512;
+    public GameObject PrinterIcon;
     public string printAppPath = @"C:\Users\aimus\source\repos\printer\printer\bin\Debug\net8.0\printer.exe"; // あなたのプリンタ用exeのパスに書き換えてください
 
     private void Start()
     {
-        StartCoroutine(DelayedCapture());
+        GameManager gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        if (gameManager.isPrinter)
+        {
+            PrinterIcon.SetActive(true);
+            StartCoroutine(DelayedCapture());
+        }
+        
     }
 
     private IEnumerator DelayedCapture()
