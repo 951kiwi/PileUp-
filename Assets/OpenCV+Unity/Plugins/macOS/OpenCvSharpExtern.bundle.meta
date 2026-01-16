@@ -1,30 +1,3 @@
-fileFormatVersion: 2
-guid: a221c5c862aa56a46aeb062f61c1c0d8
-folderAsset: yes
-timeCreated: 1511025208
-licenseType: Store
-PluginImporter:
-  serializedVersion: 1
-  iconMap: {}
-  executionOrder: {}
-  isPreloaded: 0
-  platformData:
-    Any:
-      enabled: 0
-      settings: {}
-    Editor:
-      enabled: 1
-      settings:
-        DefaultValueInitialized: true
-    OSXIntel:
-      enabled: 1
-      settings: {}
-    OSXIntel64:
-      enabled: 1
-      settings: {}
-    OSXUniversal:
-      enabled: 1
-      settings: {}
-  userData: 
-  assetBundleName: 
-  assetBundleVariant: 
+version https://git-lfs.github.com/spec/v1
+oid sha256:b9cec179d0d5018dc0d51c649da5fe8a64ec0b0a2b36de065638d0deed511d3f
+size 567
